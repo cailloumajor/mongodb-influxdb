@@ -36,5 +36,29 @@ sequenceDiagram
 
 ```ShellSession
 $ mongodb-scraper --help
-🚧
+Usage: mongodb-scraper [OPTIONS] --mongodb-database <MONGODB_DATABASE> --mongodb-collection <MONGODB_COLLECTION> --influxdb-api-token <INFLUXDB_API_TOKEN> --influxdb-org <INFLUXDB_ORG> --influxdb-bucket <INFLUXDB_BUCKET>
+
+Options:
+      --interval <INTERVAL>
+          [env: INTERVAL=] [default: 1m]
+      --mongodb-uri <MONGODB_URI>
+          URI of MongoDB server [env: MONGODB_URI=] [default: mongodb://mongodb]
+      --mongodb-database <MONGODB_DATABASE>
+          MongoDB database [env: MONGODB_DATABASE=]
+      --mongodb-collection <MONGODB_COLLECTION>
+          MongoDB collection [env: MONGODB_COLLECTION=]
+      --influxdb-url <INFLUXDB_URL>
+          InfluxDB root URL [env: INFLUXDB_URL=] [default: http://influxdb:8086]
+      --influxdb-api-token <INFLUXDB_API_TOKEN>
+          InfluxDB API token with write-buckets permission [env: INFLUXDB_API_TOKEN=]
+      --influxdb-org <INFLUXDB_ORG>
+          InfluxDB organization name or ID [env: INFLUXDB_ORG=]
+      --influxdb-bucket <INFLUXDB_BUCKET>
+          InfluxDB bucket to write to [env: INFLUXDB_BUCKET=]
+  -v, --verbose...
+          More output per occurrence
+  -q, --quiet...
+          Less output per occurrence
+  -h, --help
+          Print help information
 ```
