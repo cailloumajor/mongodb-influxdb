@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::time::Duration;
+use std::time::{Duration, UNIX_EPOCH};
 
 use actix::prelude::*;
 use anyhow::Context as _;
@@ -121,7 +121,10 @@ impl Handler<Tick> for MongoDBActor {
             };
 
             let measurement = collection.namespace().to_string();
-            let timestamp = 0u64;
+            let timestamp = UNIX_EPOCH
+                .elapsed()
+                .expect("system time is before Unix epoch")
+                .as_secs();
             let data_points: Vec<_> = match docs
                 .into_iter()
                 .map(|doc| DataPoint::try_from((doc, measurement.clone(), timestamp)))
