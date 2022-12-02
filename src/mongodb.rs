@@ -9,7 +9,7 @@ use mongodb::bson::{doc, Bson};
 use mongodb::options::{ClientOptions, FindOptions};
 use mongodb::{Client, Collection};
 use serde::Deserialize;
-use tracing::{error, info, info_span, instrument, Instrument};
+use tracing::{error, info, info_span, instrument, warn, Instrument as _};
 
 use crate::influxdb::DataPoints;
 use crate::line_protocol::{DataPoint, DataPointConvertError};
@@ -40,7 +40,7 @@ pub(crate) struct DataDocument {
     #[serde(rename = "_id")]
     pub id: String,
     pub data: HashMap<String, Bson>,
-    updated_since: i64,
+    updated_since: u64,
 }
 
 #[instrument(skip_all)]
@@ -84,6 +84,7 @@ impl Handler<Tick> for MongoDBActor {
 
     fn handle(&mut self, _msg: Tick, _ctx: &mut Self::Context) -> Self::Result {
         let collection = self.collection.clone();
+        let tick_interval = self.tick_interval.as_millis() as u64;
         let recipient = self.data_points_recipient.clone();
 
         async move {
@@ -106,9 +107,9 @@ impl Handler<Tick> for MongoDBActor {
                 }
             };
             let filtered_cursor = cursor.try_filter(|document| {
-                let fresh = document.updated_since < 60_000;
+                let fresh = document.updated_since < tick_interval;
                 if !fresh {
-                    error!(kind = "outdated data", document.id);
+                    warn!(kind = "outdated data", document.id);
                 }
                 future::ready(fresh)
             });
