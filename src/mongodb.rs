@@ -1,11 +1,10 @@
-use std::collections::HashMap;
 use std::time::{Duration, UNIX_EPOCH};
 
 use actix::prelude::*;
 use anyhow::Context as _;
 use clap::Args;
 use futures_util::{future, FutureExt, TryStreamExt};
-use mongodb::bson::{doc, Bson};
+use mongodb::bson::{doc, Document};
 use mongodb::options::{ClientOptions, FindOptions};
 use mongodb::{Client, Collection};
 use serde::Deserialize;
@@ -39,7 +38,7 @@ pub(crate) struct Config {
 pub(crate) struct DataDocument {
     #[serde(rename = "_id")]
     pub id: String,
-    pub data: HashMap<String, Bson>,
+    pub data: Document,
     updated_since: u64,
 }
 
