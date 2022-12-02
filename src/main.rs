@@ -1,4 +1,5 @@
 use actix::{Actor, System};
+use anyhow::Context as _;
 use clap::Parser;
 use clap_verbosity_flag::{InfoLevel, LogLevel, Verbosity};
 use humantime::Duration;
@@ -64,6 +65,8 @@ fn main() -> anyhow::Result<()> {
         };
         actor.start();
     });
+
+    system.run().context("error running system")?;
 
     Ok(())
 }
