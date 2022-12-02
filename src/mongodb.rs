@@ -132,7 +132,7 @@ impl Handler<Tick> for MongoDBActor {
             {
                 Ok(vec) => vec,
                 Err(DataPointConvertError { doc_id, msg }) => {
-                    error!(during = "document to data point conversion", doc_id, msg);
+                    error!(during = "DataPoint::try_from", doc_id, msg);
                     return;
                 }
             };
