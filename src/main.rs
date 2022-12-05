@@ -1,8 +1,13 @@
-use actix::{Actor, System};
-use anyhow::Context as _;
+use actix::{Actor, Arbiter, System};
+use anyhow::{ensure, Context as _};
 use clap::Parser;
 use clap_verbosity_flag::{InfoLevel, LogLevel, Verbosity};
+use futures_util::StreamExt;
 use humantime::Duration;
+use signal_hook::consts::TERM_SIGNALS;
+use signal_hook::low_level::signal_name;
+use signal_hook_tokio::Signals;
+use tracing::{info, instrument};
 use tracing_log::LogTracer;
 
 mod influxdb;
@@ -39,6 +44,15 @@ where
     }
 }
 
+#[instrument(skip_all)]
+async fn handle_signals(signals: Signals) {
+    let mut signals_stream = signals.map(|signal| signal_name(signal).unwrap_or("unknown"));
+    while let Some(signal) = signals_stream.next().await {
+        info!(signal, msg = "received signal, finishing");
+        System::current().stop();
+    }
+}
+
 fn main() -> anyhow::Result<()> {
     let args = Args::parse();
 
@@ -49,6 +63,13 @@ fn main() -> anyhow::Result<()> {
     LogTracer::init_with_filter(args.verbose.log_level_filter())?;
 
     let system = System::new();
+
+    let signals = system
+        .block_on(async { Signals::new(TERM_SIGNALS) })
+        .context("error registering termination signals")?;
+    let signals_handle = signals.handle();
+    let sent = Arbiter::current().spawn(handle_signals(signals));
+    ensure!(sent, "error spawning signals handler");
 
     let influxdb_client = influxdb::Client::new(&args.influxdb);
     let influxdb_addr = system.block_on(async {
@@ -67,6 +88,8 @@ fn main() -> anyhow::Result<()> {
     });
 
     system.run().context("error running system")?;
+
+    signals_handle.close();
 
     Ok(())
 }
