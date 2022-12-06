@@ -4,12 +4,13 @@ use actix::prelude::*;
 use anyhow::Context as _;
 use clap::Args;
 use futures_util::{future, FutureExt, TryStreamExt};
-use mongodb::bson::{doc, Document};
-use mongodb::options::{ClientOptions, FindOptions};
+use mongodb::bson::{bson, doc, Document};
+use mongodb::options::{ClientOptions, EstimatedDocumentCountOptions, FindOptions};
 use mongodb::{Client, Collection};
 use serde::Deserialize;
 use tracing::{error, info, info_span, instrument, warn, Instrument as _};
 
+use crate::health::{HealthPing, HealthResult};
 use crate::influxdb::DataPoints;
 use crate::line_protocol::{DataPoint, DataPointConvertError};
 
@@ -141,6 +142,34 @@ impl Handler<Tick> for MongoDBActor {
             }
         }
         .instrument(info_span!("tick_handler"))
+        .boxed()
+    }
+}
+
+impl Handler<HealthPing> for MongoDBActor {
+    type Result = ResponseFuture<HealthResult>;
+
+    fn handle(&mut self, _msg: HealthPing, ctx: &mut Self::Context) -> Self::Result {
+        let collection = self.collection.clone();
+        let state = ctx.state();
+        let options = EstimatedDocumentCountOptions::builder()
+            .max_time(Duration::from_secs(2))
+            .comment(bson!("healthcheck"))
+            .build();
+
+        async move {
+            if state != ActorState::Running {
+                return Err(format!("actor is in `{:?} state`", state));
+            }
+
+            if let Err(err) = collection.estimated_document_count(options).await {
+                error!(kind="estimated document count", %err);
+                return Err("estimated document count query error".into());
+            }
+
+            Ok(())
+        }
+        .instrument(info_span!("mongodb_health_handler"))
         .boxed()
     }
 }

@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use actix::prelude::*;
 use clap::Args;
 use futures_util::FutureExt;
@@ -6,6 +8,7 @@ use tracing::{error, info_span, instrument, Instrument};
 use trillium_tokio::TcpConnector;
 use url::Url;
 
+use crate::health::{HealthPing, HealthResult};
 use crate::line_protocol::DataPoint;
 
 type HttpClient = trillium_client::Client<TcpConnector>;
@@ -35,7 +38,6 @@ struct WriteResponse {
     message: String,
 }
 
-#[derive(Clone)]
 pub(crate) struct Client {
     url: Url,
     bucket: String,
@@ -62,7 +64,7 @@ impl Client {
     }
 
     #[instrument(skip_all, name = "influxdb_write")]
-    async fn write(&self, line_protocol: String) {
+    async fn write(&self, line_protocol: String) -> bool {
         let mut url = self.url.join("/api/v2/write").unwrap();
         url.query_pairs_mut()
             .append_pair("bucket", &self.bucket)
@@ -78,14 +80,14 @@ impl Client {
 
         if let Err(err) = conn.send().await {
             error!(during="request send", %err);
-            return;
+            return false;
         }
 
         let status_code = conn.status().unwrap();
         if !status_code.is_success() {
             error!(kind = "response status", %status_code);
         } else {
-            return;
+            return true;
         }
 
         match conn.response_json().await {
@@ -96,11 +98,20 @@ impl Client {
                 error!(during="response deserializing", %err);
             }
         };
+        false
     }
 }
 
 pub(crate) struct InfluxDBActor {
-    pub influxdb_client: Client,
+    influxdb_client: Arc<Client>,
+}
+
+impl InfluxDBActor {
+    pub(crate) fn new(client: Client) -> Self {
+        Self {
+            influxdb_client: Arc::new(client),
+        }
+    }
 }
 
 impl Actor for InfluxDBActor {
@@ -115,7 +126,7 @@ impl Handler<DataPoints> for InfluxDBActor {
     type Result = ResponseFuture<()>;
 
     fn handle(&mut self, msg: DataPoints, _ctx: &mut Self::Context) -> Self::Result {
-        let influxdb_client = self.influxdb_client.clone();
+        let client = Arc::clone(&self.influxdb_client);
         let line_protocol = msg
             .0
             .into_iter()
@@ -124,9 +135,32 @@ impl Handler<DataPoints> for InfluxDBActor {
             .join("\n");
 
         async move {
-            influxdb_client.write(line_protocol).await;
+            client.write(line_protocol).await;
         }
         .instrument(info_span!("data_points_handler"))
+        .boxed()
+    }
+}
+
+impl Handler<HealthPing> for InfluxDBActor {
+    type Result = ResponseFuture<HealthResult>;
+
+    fn handle(&mut self, _msg: HealthPing, ctx: &mut Self::Context) -> Self::Result {
+        let client = Arc::clone(&self.influxdb_client);
+        let state = ctx.state();
+
+        async move {
+            if state != ActorState::Running {
+                return Err(format!("actor is in `{:?} state`", state));
+            }
+
+            let success = client.write(String::new()).await;
+            if !success {
+                return Err("write error".into());
+            }
+
+            Ok(())
+        }
         .boxed()
     }
 }
