@@ -1,0 +1,29 @@
+use("testdb");
+
+db.disableFreeMonitoring();
+
+function updateDocument(id) {
+    db.testcoll.updateOne(
+        {
+            _id: id
+        },
+        {
+            $currentDate: {
+                updatedAt: true
+            },
+            $set: {
+                "data.integer": Math.floor(Math.random() * 100 + 200),
+                "data.float": Math.random() * 15 + 10,
+            }
+        },
+        {
+            upsert: true
+        }
+    );
+}
+
+for (let i = 0; i < 4; i++) {
+    updateDocument("first");
+    updateDocument("second");
+    sleep(1000);
+}
