@@ -30,27 +30,27 @@ pub(crate) struct DataPoint {
 impl TryFrom<(DataDocument, String, u64)> for DataPoint {
     type Error = DataPointConvertError;
 
-    /// Tries to convert from a tuple of (`data document`, `measurement name`,
-    /// `timestamp`).
-    fn try_from(t: (DataDocument, String, u64)) -> Result<Self, Self::Error> {
-        let fields =
-            t.0.data
-                .into_iter()
-                .map(|(k, v)| {
-                    FieldValue::try_from(v)
-                        .map(|field_value| (k, field_value))
-                        .map_err(|msg| DataPointConvertError {
-                            doc_id: t.0.id.clone(),
-                            msg,
-                        })
-                })
-                .collect::<Result<_, Self::Error>>()?;
-        let tags = [("id".into(), t.0.id)].into();
+    fn try_from(
+        (data_doc, measurement, timestamp): (DataDocument, String, u64),
+    ) -> Result<Self, Self::Error> {
+        let fields = data_doc
+            .data
+            .into_iter()
+            .map(|(k, v)| {
+                FieldValue::try_from(v)
+                    .map(|field_value| (k, field_value))
+                    .map_err(|msg| DataPointConvertError {
+                        doc_id: data_doc.id.clone(),
+                        msg,
+                    })
+            })
+            .collect::<Result<_, Self::Error>>()?;
+        let tags = [("id".into(), data_doc.id)].into();
         Ok(Self {
-            measurement: t.1,
+            measurement,
             tags,
             fields,
-            timestamp: t.2,
+            timestamp,
         })
     }
 }
