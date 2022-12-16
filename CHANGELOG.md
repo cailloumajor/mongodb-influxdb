@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.1](https://github.com/cailloumajor/mongodb-scraper/compare/v1.0.0...v1.0.1) (2022-12-16)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate serde to 1.0.150 ([55b7c46](https://github.com/cailloumajor/mongodb-scraper/commit/55b7c463c33cf2b74c40de79ac8621514ee9615e))
+* **deps:** update rust docker tag to v1.66.0 ([6532e9f](https://github.com/cailloumajor/mongodb-scraper/commit/6532e9f7d51f52dbfffe7c17b8de3dce41e98460))
+* use tuple destructuring as self-documenting ([c10762c](https://github.com/cailloumajor/mongodb-scraper/commit/c10762c48a11a6c9cb764cf6aa82a4d36382f244))
+
 ## 1.0.0 (2022-12-07)
 
 
