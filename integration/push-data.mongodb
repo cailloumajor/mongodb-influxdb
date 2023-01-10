@@ -25,5 +25,5 @@ function updateDocument(id) {
 for (let i = 0; i < 4; i++) {
     updateDocument("first");
     updateDocument("second");
-    sleep(1000);
+    sleep(900);
 }
