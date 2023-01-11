@@ -15,7 +15,7 @@ lazy_static! {
 pub(super) enum FieldValue {
     Float(f64),
     Integer(i64),
-    _UInteger(u64),
+    UInteger(u64),
     String(String),
     Boolean(bool),
 }
@@ -33,7 +33,7 @@ impl fmt::Display for FieldValue {
                 let out = buffer.format(i);
                 write!(f, "{}i", out)
             }
-            Self::_UInteger(i) => {
+            Self::UInteger(i) => {
                 let mut buffer = itoa::Buffer::new();
                 let out = buffer.format(i);
                 write!(f, "{}u", out)
@@ -141,7 +141,7 @@ mod tests {
 
     #[test]
     fn display_uinteger() {
-        let field_value = FieldValue::_UInteger(549844);
+        let field_value = FieldValue::UInteger(549844);
 
         assert_eq!(field_value.to_string(), "549844u");
     }

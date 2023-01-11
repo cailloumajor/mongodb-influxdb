@@ -1,4 +1,5 @@
-use std::{collections::BTreeMap, fmt};
+use std::collections::BTreeMap;
+use std::fmt;
 
 use lazy_static::lazy_static;
 
@@ -14,8 +15,9 @@ lazy_static! {
 }
 
 #[derive(Debug)]
-pub(crate) struct DataPointConvertError {
+pub(crate) struct DataPointCreateError {
     pub doc_id: String,
+    pub field: String,
     pub msg: &'static str,
 }
 
@@ -27,25 +29,50 @@ pub(crate) struct DataPoint {
     timestamp: u64,
 }
 
-impl TryFrom<(DataDocument, String, u64)> for DataPoint {
-    type Error = DataPointConvertError;
+impl DataPoint {
+    pub(crate) fn create(
+        data_doc: DataDocument,
+        measurement: String,
+        tags_age: &[String],
+        timestamp: u64, // in seconds
+    ) -> Result<Self, DataPointCreateError> {
+        let mut fields: BTreeMap<String, FieldValue> = BTreeMap::new();
+        for (key, value) in data_doc.data {
+            let field_value = value.try_into().map_err(|msg| DataPointCreateError {
+                doc_id: data_doc.id.to_owned(),
+                field: key.to_owned(),
+                msg,
+            })?;
+            fields.insert(key.to_owned(), field_value);
+        }
+        for key in tags_age {
+            let source_timestamp: u64 = data_doc
+                .source_timestamps
+                .get(key)
+                .ok_or(DataPointCreateError {
+                    doc_id: data_doc.id.to_owned(),
+                    field: key.to_owned(),
+                    msg: "missing source timestamp for field",
+                })?
+                .as_datetime()
+                .ok_or(DataPointCreateError {
+                    doc_id: data_doc.id.to_owned(),
+                    field: key.to_owned(),
+                    msg: "invalid datetime",
+                })?
+                .timestamp_millis()
+                .try_into()
+                .map_err(|_| DataPointCreateError {
+                    doc_id: data_doc.id.to_owned(),
+                    field: key.to_owned(),
+                    msg: "timestamp out of range",
+                })?;
+            let value = FieldValue::UInteger(timestamp - source_timestamp / 1000);
+            fields.insert(format!("{}Age", key), value);
+        }
 
-    fn try_from(
-        (data_doc, measurement, timestamp): (DataDocument, String, u64),
-    ) -> Result<Self, Self::Error> {
-        let fields = data_doc
-            .data
-            .into_iter()
-            .map(|(k, v)| {
-                FieldValue::try_from(v)
-                    .map(|field_value| (k, field_value))
-                    .map_err(|msg| DataPointConvertError {
-                        doc_id: data_doc.id.clone(),
-                        msg,
-                    })
-            })
-            .collect::<Result<_, Self::Error>>()?;
         let tags = [("id".into(), data_doc.id)].into();
+
         Ok(Self {
             measurement,
             tags,
@@ -94,14 +121,15 @@ impl fmt::Display for DataPoint {
 
 #[cfg(test)]
 mod tests {
-    use mongodb::bson::{self, doc};
+    use mongodb::bson::{self, doc, DateTime};
 
     use crate::mongodb::DataDocument;
 
     use super::*;
 
     #[test]
-    fn try_from_tuple() {
+    fn create() {
+        let now_secs = DateTime::now().timestamp_millis() / 1000;
         let document = doc! {
             "_id": "anid",
             "updatedSince": 0,
@@ -111,12 +139,23 @@ mod tests {
                 "third": 37.5,
                 "fourth": 42,
             },
+            "sourceTimestamps": {
+                "some": DateTime::from_millis((now_secs - 42) * 1000),
+                "other": DateTime::from_millis((now_secs - 3600) * 1000),
+                "notRelevant": DateTime::from_millis((now_secs - 5) * 1000),
+            },
         };
         let data_document: DataDocument = bson::from_document(document).unwrap();
         let measurement = String::from("some_measurement");
-        let tuple = (data_document, measurement, 545645646);
+        let tags_validity_time = &["some".to_string(), "other".to_string()];
 
-        let data_point = DataPoint::try_from(tuple).expect("conversion failure");
+        let data_point = DataPoint::create(
+            data_document,
+            measurement,
+            tags_validity_time,
+            now_secs as u64,
+        )
+        .unwrap();
 
         assert_eq!(data_point.measurement, "some_measurement");
         assert_eq!(data_point.tags["id"], "anid");
@@ -127,6 +166,9 @@ mod tests {
         );
         assert_eq!(data_point.fields["third"], FieldValue::Float(37.5));
         assert_eq!(data_point.fields["fourth"], FieldValue::Integer(42));
+        assert_eq!(data_point.fields["someAge"], FieldValue::UInteger(42));
+        assert_eq!(data_point.fields["otherAge"], FieldValue::UInteger(3600));
+        assert!(data_point.fields.get("notRelevantAge").is_none());
     }
 
     #[test]

@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use std::time::{Duration, UNIX_EPOCH};
 
 use actix::prelude::*;
@@ -12,7 +13,7 @@ use tracing::{error, info, info_span, instrument, warn, Instrument as _};
 
 use crate::health::{HealthPing, HealthResult};
 use crate::influxdb::DataPoints;
-use crate::line_protocol::{DataPoint, DataPointConvertError};
+use crate::line_protocol::{DataPoint, DataPointCreateError};
 
 type ModelCollection = Collection<DataDocument>;
 
@@ -40,6 +41,7 @@ pub(crate) struct DataDocument {
     #[serde(rename = "_id")]
     pub id: String,
     pub data: Document,
+    pub source_timestamps: Document,
     updated_since: u64,
 }
 
@@ -62,6 +64,7 @@ pub(crate) async fn create_collection(config: &Config) -> anyhow::Result<ModelCo
 pub(crate) struct MongoDBActor {
     pub collection: ModelCollection,
     pub tick_interval: Duration,
+    pub tags_age: Arc<Vec<String>>,
     pub data_points_recipient: Recipient<DataPoints>,
 }
 
@@ -85,11 +88,12 @@ impl Handler<Tick> for MongoDBActor {
     fn handle(&mut self, _msg: Tick, _ctx: &mut Self::Context) -> Self::Result {
         let collection = self.collection.clone();
         let tick_interval = self.tick_interval.as_millis() as u64;
+        let tags_age = Arc::clone(&self.tags_age);
         let recipient = self.data_points_recipient.clone();
 
         async move {
             let projection = doc! {
-                "updatedSince" : {
+                "updatedSince": {
                     "$dateDiff": {
                         "startDate": "$updatedAt",
                         "endDate": "$$NOW",
@@ -97,6 +101,7 @@ impl Handler<Tick> for MongoDBActor {
                     },
                 },
                 "data": true,
+                "sourceTimestamps": true,
             };
             let options = FindOptions::builder().projection(projection).build();
             let cursor = match collection.find(None, options).await {
@@ -128,12 +133,12 @@ impl Handler<Tick> for MongoDBActor {
                 .as_secs();
             let data_points: Vec<_> = match docs
                 .into_iter()
-                .map(|doc| DataPoint::try_from((doc, measurement.clone(), timestamp)))
+                .map(|doc| DataPoint::create(doc, measurement.clone(), &tags_age, timestamp))
                 .collect()
             {
                 Ok(vec) => vec,
-                Err(DataPointConvertError { doc_id, msg }) => {
-                    error!(during = "DataPoint::try_from", doc_id, msg);
+                Err(DataPointCreateError { doc_id, field, msg }) => {
+                    error!(during = "DataPoint::new", doc_id, field, msg);
                     return;
                 }
             };
