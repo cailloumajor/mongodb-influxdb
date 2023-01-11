@@ -18,8 +18,13 @@ mod mongodb;
 
 #[derive(Parser)]
 struct Args {
+    /// Scraping interval
     #[arg(env, long, default_value = "1m")]
     interval: Duration,
+
+    /// Comma-separated tags for which to add an age field
+    #[arg(env, long, value_delimiter = ',')]
+    tags_age: Vec<String>,
 
     #[command(flatten)]
     mongodb: mongodb::Config,
@@ -79,6 +84,7 @@ async fn main() -> anyhow::Result<()> {
         let actor = mongodb::MongoDBActor {
             collection,
             tick_interval: args.interval.into(),
+            tags_age: args.tags_age.into(),
             data_points_recipient: influxdb_addr.clone().recipient(),
         };
         actor.start()

@@ -69,10 +69,11 @@ docker compose exec mongodb mongosh --quiet --norc /usr/src/push-data.mongodb
 
 # Show the data that will be tested
 awk '/\/\/ Tests start below/ {exit} {print}' query.flux \
-| docker compose exec -T influxdb influx query -
+| docker compose exec -T influxdb influx query --raw -
 
 # Run the tests with influxdb CLI
-docker compose exec -T influxdb influx query - < query.flux
+docker compose exec -T influxdb influx query - < query.flux \
+|| die "Failure running Flux tests"
 
 echo "🎉 success"
 teardown
