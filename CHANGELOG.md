@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.0.0](https://github.com/cailloumajor/mongodb-scraper/compare/v1.1.0...v2.0.0) (2023-01-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* follow MongoDB data document schema change
+
+### Features
+
+* follow MongoDB data document schema change ([49f0b3e](https://github.com/cailloumajor/mongodb-scraper/commit/49f0b3efe28caf43ae139110f7cbf833d735ae05))
+
+
+### Bug Fixes
+
+* **deps:** update rust crate clap to 4.1.1 ([4f16744](https://github.com/cailloumajor/mongodb-scraper/commit/4f1674465c7c64189f6430781369f636453e8b29))
+* **deps:** update rust docker tag to v1.66.1 ([78c502d](https://github.com/cailloumajor/mongodb-scraper/commit/78c502dd53a9c1e4415604f819e2526d9f030ef8))
+* follow changes in clap ([f54703e](https://github.com/cailloumajor/mongodb-scraper/commit/f54703e01d6c6eae7208691efa18c09744b64f0d))
+
 ## [1.1.0](https://github.com/cailloumajor/mongodb-scraper/compare/v1.0.1...v1.1.0) (2023-01-11)
 
 
