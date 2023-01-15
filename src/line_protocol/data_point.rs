@@ -37,7 +37,7 @@ impl DataPoint {
         timestamp: u64, // in seconds
     ) -> Result<Self, DataPointCreateError> {
         let mut fields: BTreeMap<String, FieldValue> = BTreeMap::new();
-        for (key, value) in data_doc.data {
+        for (key, value) in data_doc.val {
             let field_value = value.try_into().map_err(|msg| DataPointCreateError {
                 doc_id: data_doc.id.to_owned(),
                 field: key.to_owned(),
@@ -47,7 +47,7 @@ impl DataPoint {
         }
         for key in tags_age {
             let source_timestamp: u64 = data_doc
-                .source_timestamps
+                .ts
                 .get(key)
                 .ok_or(DataPointCreateError {
                     doc_id: data_doc.id.to_owned(),
@@ -133,13 +133,13 @@ mod tests {
         let document = doc! {
             "_id": "anid",
             "updatedSince": 0,
-            "data": {
+            "val": {
                 "first": true,
                 "second": "a_string",
                 "third": 37.5,
                 "fourth": 42,
             },
-            "sourceTimestamps": {
+            "ts": {
                 "some": DateTime::from_millis((now_secs - 42) * 1000),
                 "other": DateTime::from_millis((now_secs - 3600) * 1000),
                 "notRelevant": DateTime::from_millis((now_secs - 5) * 1000),

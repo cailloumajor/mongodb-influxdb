@@ -10,7 +10,13 @@ This service will query the configured database and collection at regular interv
 
 ### InfluxDB
 
-After having obtained documents from MongoDB, this service will send data points to InfluxDB (line protocol), one for each document in the collection.
+After having obtained documents from MongoDB, this service will send data points to InfluxDB (line protocol), one for each document in the collection. The measurement will be set to the namespace of the collection.
+
+Data points will have following characteristics:
+
+- document primary key (`_id`) as a tag value, with `id` as the tag key;
+- each key and value pair in the `val` sub-document, respectively as field key and value;
+- each key and value pair in the `ts` sub-document, respectively as field key (appended with `Age`) and value;
 
 ## Data flow
 
