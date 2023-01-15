@@ -14,11 +14,11 @@ function updateDocument(id) {
                 updatedAt: true
             },
             $set: {
-                "data.integer": Math.floor(Math.random() * 100 + 200),
-                "data.float": Math.random() * 15 + 10,
-                "sourceTimestamps.first": validityTime,
-                "sourceTimestamps.second": validityTime,
-                "sourceTimestamps.third": validityTime
+                "val.integer": Math.floor(Math.random() * 100 + 200),
+                "val.float": Math.random() * 15 + 10,
+                "ts.first": validityTime,
+                "ts.second": validityTime,
+                "ts.third": validityTime
             }
         },
         {

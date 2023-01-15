@@ -40,8 +40,8 @@ pub(crate) struct Config {
 pub(crate) struct DataDocument {
     #[serde(rename = "_id")]
     pub id: String,
-    pub data: Document,
-    pub source_timestamps: Document,
+    pub val: Document,
+    pub ts: Document,
     updated_since: u64,
 }
 
@@ -100,8 +100,8 @@ impl Handler<Tick> for MongoDBActor {
                         "unit": "millisecond",
                     },
                 },
-                "data": true,
-                "sourceTimestamps": true,
+                "val": true,
+                "ts": true,
             };
             let options = FindOptions::builder().projection(projection).build();
             let cursor = match collection.find(None, options).await {
