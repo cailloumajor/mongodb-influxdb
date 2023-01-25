@@ -19,7 +19,7 @@ ryu = "1.0.12"
 serde = { version = "1.0.152", features = [ "derive" ] }
 signal-hook = { version = "0.3.14", default-features = false }
 signal-hook-tokio = "0.3.1"
-tokio = { version = "1.24.1", features = [ "net" ] }
+tokio = { version = "1.24.2", features = [ "net" ] }
 tokio-stream = { version = "0.1.11", features = [ "net" ] }
 tracing = "0.1.37"
 trillium-client = { version = "0.2.2", features = [ "json" ] }
