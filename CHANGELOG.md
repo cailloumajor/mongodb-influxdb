@@ -1,5 +1,21 @@
 # Changelog
 
+## [2.0.1](https://github.com/cailloumajor/mongodb-scraper/compare/v2.0.0...v2.0.1) (2023-02-08)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate anyhow to 1.0.69 ([62b0e4f](https://github.com/cailloumajor/mongodb-scraper/commit/62b0e4fb8b6b75903e22a621079647eb666757bb))
+* **deps:** update rust crate clap to 4.1.4 ([d189ef5](https://github.com/cailloumajor/mongodb-scraper/commit/d189ef551a77cb817e32c067d08d4b63dd23887e))
+* **deps:** update rust crate futures-util to 0.3.26 ([5f50a48](https://github.com/cailloumajor/mongodb-scraper/commit/5f50a48fbec71680260a22670a201311fff303ef))
+* **deps:** update rust crate tokio to 1.24.2 ([a401f46](https://github.com/cailloumajor/mongodb-scraper/commit/a401f466cfe183cd4815fe44e0027ce0bb536196))
+* **deps:** update rust crate tokio to 1.25.0 ([d2793f9](https://github.com/cailloumajor/mongodb-scraper/commit/d2793f9f1df0f70c71bc4020771edbb9e67dc901))
+* **deps:** update rust crate trillium-client to 0.3.0 ([cfb1793](https://github.com/cailloumajor/mongodb-scraper/commit/cfb1793e2d32389386da269a245a77c570c2323f))
+* **deps:** update rust docker tag to v1.67.0 ([a670b8d](https://github.com/cailloumajor/mongodb-scraper/commit/a670b8d8ed0205c44e0218dd74487ea42a3d7884))
+* **deps:** update tonistiigi/xx docker tag to v1.2.0 ([ff2d92d](https://github.com/cailloumajor/mongodb-scraper/commit/ff2d92d64d51efaaf5d5ca44fb6a6e2d22f8b01b))
+* trillium-client 0.3.0 breaking changes ([9e32209](https://github.com/cailloumajor/mongodb-scraper/commit/9e32209f4d177ed684ef230d994e016c883239f9))
+* use xx-cargo ([e21feca](https://github.com/cailloumajor/mongodb-scraper/commit/e21feca4bd4aca75289b4ab8d381f888c1d3e3e0))
+
 ## [2.0.0](https://github.com/cailloumajor/mongodb-scraper/compare/v1.1.0...v2.0.0) (2023-01-15)
 
 
