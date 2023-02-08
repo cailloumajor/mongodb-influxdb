@@ -31,12 +31,12 @@ impl fmt::Display for FieldValue {
             Self::Integer(i) => {
                 let mut buffer = itoa::Buffer::new();
                 let out = buffer.format(i);
-                write!(f, "{}i", out)
+                write!(f, "{out}i")
             }
             Self::UInteger(i) => {
                 let mut buffer = itoa::Buffer::new();
                 let out = buffer.format(i);
-                write!(f, "{}u", out)
+                write!(f, "{out}u")
             }
             Self::String(ref s) => {
                 let escaped = FIELD_VALUE_REPLACER.replace_all(s);

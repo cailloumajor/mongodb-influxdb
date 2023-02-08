@@ -151,7 +151,7 @@ impl Handler<HealthPing> for InfluxDBActor {
 
         async move {
             if state != ActorState::Running {
-                return Err(format!("actor is in `{:?} state`", state));
+                return Err(format!("actor is in `{state:?} state`"));
             }
 
             let success = client.write(String::new()).await;
