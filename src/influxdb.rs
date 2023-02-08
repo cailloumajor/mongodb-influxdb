@@ -71,17 +71,20 @@ impl Client {
             .append_pair("org", &self.org)
             .append_pair("precision", "s");
 
-        let mut conn = self
+        let mut conn = match self
             .http_client
             .post(url)
             .with_header("Authorization", self.auth_header.to_owned())
             .with_header("Content-Type", "text/plain; charset=utf-8")
-            .with_body(line_protocol);
-
-        if let Err(err) = conn.send().await {
-            error!(during="request send", %err);
-            return false;
-        }
+            .with_body(line_protocol)
+            .await
+        {
+            Ok(conn) => conn,
+            Err(err) => {
+                error!(during="request send", %err);
+                return false;
+            }
+        };
 
         let status_code = conn.status().unwrap();
         if !status_code.is_success() {
