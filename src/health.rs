@@ -58,7 +58,7 @@ impl Handler<HealthQuery> for HealthService {
                     }
                 };
                 if let Err(err) = pong {
-                    return Err(format!("component `{}` is unhealthy: {}", name, err));
+                    return Err(format!("component `{name}` is unhealthy: {err}"));
                 }
             }
 

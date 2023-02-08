@@ -68,7 +68,7 @@ impl DataPoint {
                     msg: "timestamp out of range",
                 })?;
             let value = FieldValue::UInteger(timestamp - source_timestamp / 1000);
-            fields.insert(format!("{}Age", key), value);
+            fields.insert(format!("{key}Age"), value);
         }
 
         let tags = [("id".into(), data_doc.id)].into();

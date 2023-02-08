@@ -164,7 +164,7 @@ impl Handler<HealthPing> for MongoDBActor {
 
         async move {
             if state != ActorState::Running {
-                return Err(format!("actor is in `{:?} state`", state));
+                return Err(format!("actor is in `{state:?} state`"));
             }
 
             if let Err(err) = collection.estimated_document_count(options).await {
