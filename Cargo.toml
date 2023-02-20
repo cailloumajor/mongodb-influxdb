@@ -20,7 +20,7 @@ serde = { version = "1.0.152", features = [ "derive" ] }
 signal-hook = { version = "0.3.14", default-features = false }
 signal-hook-tokio = "0.3.1"
 tokio = { version = "1.25.0", features = [ "net" ] }
-tokio-stream = { version = "0.1.11", features = [ "net" ] }
+tokio-stream = { version = "0.1.12", features = [ "net" ] }
 tracing = "0.1.37"
 trillium-client = { version = "0.3.0", features = [ "json" ] }
 trillium-tokio = "0.2.1"
