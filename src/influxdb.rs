@@ -1,14 +1,13 @@
 use std::sync::Arc;
 
-use actix::prelude::*;
 use clap::Args;
-use futures_util::FutureExt;
 use serde::Deserialize;
-use tracing::{error, info_span, instrument, Instrument};
+use tokio::sync::{mpsc, oneshot};
+use tokio::task::JoinHandle;
+use tracing::{error, info, info_span, instrument, Instrument};
 use trillium_tokio::TcpConnector;
 use url::Url;
 
-use crate::health::{HealthPing, HealthResult};
 use crate::line_protocol::DataPoint;
 
 type HttpClient = trillium_client::Client<TcpConnector>;
@@ -64,7 +63,7 @@ impl Client {
     }
 
     #[instrument(skip_all, name = "influxdb_write")]
-    async fn write(&self, line_protocol: String) -> bool {
+    async fn write(&self, line_protocol: String) -> Result<(), ()> {
         let mut url = self.url.join("/api/v2/write").unwrap();
         url.query_pairs_mut()
             .append_pair("bucket", &self.bucket)
@@ -82,7 +81,7 @@ impl Client {
             Ok(conn) => conn,
             Err(err) => {
                 error!(during="request send", %err);
-                return false;
+                return Err(());
             }
         };
 
@@ -90,7 +89,7 @@ impl Client {
         if !status_code.is_success() {
             error!(kind = "response status", %status_code);
         } else {
-            return true;
+            return Ok(());
         }
 
         match conn.response_json().await {
@@ -101,69 +100,56 @@ impl Client {
                 error!(during="response deserializing", %err);
             }
         };
-        false
+        Err(())
     }
-}
 
-pub(crate) struct InfluxDBActor {
-    influxdb_client: Arc<Client>,
-}
+    pub(crate) fn handle_data_points(
+        self: Arc<Self>,
+    ) -> (mpsc::Sender<Vec<DataPoint>>, JoinHandle<()>) {
+        let (tx, mut rx) = mpsc::channel::<Vec<DataPoint>>(1);
 
-impl InfluxDBActor {
-    pub(crate) fn new(client: Client) -> Self {
-        Self {
-            influxdb_client: Arc::new(client),
-        }
-    }
-}
+        let task = tokio::spawn(
+            async move {
+                info!(status = "started");
 
-impl Actor for InfluxDBActor {
-    type Context = Context<Self>;
-}
+                while let Some(data_points) = rx.recv().await {
+                    let line_protocol = data_points
+                        .into_iter()
+                        .map(|m| m.to_string())
+                        .collect::<Vec<_>>()
+                        .join("\n");
+                    let _ = self.write(line_protocol).await;
+                }
 
-#[derive(Message)]
-#[rtype(result = "()")]
-pub(crate) struct DataPoints(pub Vec<DataPoint>);
-
-impl Handler<DataPoints> for InfluxDBActor {
-    type Result = ResponseFuture<()>;
-
-    fn handle(&mut self, msg: DataPoints, _ctx: &mut Self::Context) -> Self::Result {
-        let client = Arc::clone(&self.influxdb_client);
-        let line_protocol = msg
-            .0
-            .into_iter()
-            .map(|m| m.to_string())
-            .collect::<Vec<_>>()
-            .join("\n");
-
-        async move {
-            client.write(line_protocol).await;
-        }
-        .instrument(info_span!("data_points_handler"))
-        .boxed()
-    }
-}
-
-impl Handler<HealthPing> for InfluxDBActor {
-    type Result = ResponseFuture<HealthResult>;
-
-    fn handle(&mut self, _msg: HealthPing, ctx: &mut Self::Context) -> Self::Result {
-        let client = Arc::clone(&self.influxdb_client);
-        let state = ctx.state();
-
-        async move {
-            if state != ActorState::Running {
-                return Err(format!("actor is in `{state:?} state`"));
+                info!(status = "terminating");
             }
+            .instrument(info_span!("influxdb_data_points_handler")),
+        );
 
-            let success = client.write(String::new()).await;
-            if !success {
-                return Err("write error".into());
+        (tx, task)
+    }
+
+    pub(crate) fn handle_health(
+        self: Arc<Self>,
+    ) -> (mpsc::Sender<oneshot::Sender<bool>>, JoinHandle<()>) {
+        let (tx, mut rx) = mpsc::channel::<oneshot::Sender<bool>>(1);
+
+        let task = tokio::spawn(
+            async move {
+                info!(status = "started");
+
+                while let Some(outcome_tx) = rx.recv().await {
+                    let outcome = self.write(String::new()).await.is_ok();
+                    if outcome_tx.send(outcome).is_err() {
+                        error!(kind = "outcome channel sending");
+                    }
+                }
+
+                info!(status = "terminating");
             }
+            .instrument(info_span!("influxdb_health_handler")),
+        );
 
-            Ok(())
-        }
-        .boxed()
+        (tx, task)
     }
 }
