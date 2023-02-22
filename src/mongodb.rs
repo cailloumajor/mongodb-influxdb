@@ -75,25 +75,25 @@ impl Collection {
         interval.set_missed_tick_behavior(MissedTickBehavior::Delay);
         let mut interval_stream = Abortable::new(IntervalStream::new(interval), abort_registration);
         let tick_interval = period.as_millis() as u64;
+        let projection = doc! {
+            "updatedSince": {
+                "$dateDiff": {
+                    "startDate": "$updatedAt",
+                    "endDate": "$$NOW",
+                    "unit": "millisecond",
+                },
+            },
+            "val": true,
+            "ts": true,
+        };
+        let options = FindOptions::builder().projection(projection).build();
 
         let task = tokio::spawn(
             async move {
                 info!(status = "started");
 
                 while interval_stream.next().await.is_some() {
-                    let projection = doc! {
-                        "updatedSince": {
-                            "$dateDiff": {
-                                "startDate": "$updatedAt",
-                                "endDate": "$$NOW",
-                                "unit": "millisecond",
-                            },
-                        },
-                        "val": true,
-                        "ts": true,
-                    };
-                    let options = FindOptions::builder().projection(projection).build();
-                    let cursor = match self.0.find(None, options).await {
+                    let cursor = match self.0.find(None, options.clone()).await {
                         Ok(cursor) => cursor,
                         Err(err) => {
                             error!(kind="find in collection", %err);
@@ -150,17 +150,17 @@ impl Collection {
         self: Arc<Self>,
     ) -> (mpsc::Sender<oneshot::Sender<bool>>, JoinHandle<()>) {
         let (tx, mut rx) = mpsc::channel::<oneshot::Sender<bool>>(1);
+        let options = EstimatedDocumentCountOptions::builder()
+            .max_time(Duration::from_secs(2))
+            .comment(bson!("healthcheck"))
+            .build();
 
         let task = tokio::spawn(
             async move {
                 info!(status = "started");
 
                 while let Some(outcome_tx) = rx.recv().await {
-                    let options = EstimatedDocumentCountOptions::builder()
-                        .max_time(Duration::from_secs(2))
-                        .comment(bson!("healthcheck"))
-                        .build();
-                    let outcome = match self.0.estimated_document_count(options).await {
+                    let outcome = match self.0.estimated_document_count(options.clone()).await {
                         Ok(_) => true,
                         Err(err) => {
                             error!(kind = "estimated document count", %err);
