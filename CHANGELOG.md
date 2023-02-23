@@ -1,5 +1,24 @@
 # Changelog
 
+## [2.1.0](https://github.com/cailloumajor/mongodb-scraper/compare/v2.0.1...v2.1.0) (2023-02-23)
+
+
+### Features
+
+* stop using actix ([12e9a22](https://github.com/cailloumajor/mongodb-scraper/commit/12e9a224701692c2bbca5419d12da4be9387bc98))
+
+
+### Bug Fixes
+
+* add tests for health module ([8540819](https://github.com/cailloumajor/mongodb-scraper/commit/8540819409c11d8c928f0479a7f6a95c312cebbc))
+* clone instead of re-computing local data ([7f847ca](https://github.com/cailloumajor/mongodb-scraper/commit/7f847cad23fd912bae63c48f9bde57bd0b85fa7f))
+* **deps:** update rust crate clap to 4.1.6 ([f4a6391](https://github.com/cailloumajor/mongodb-scraper/commit/f4a639176375975257013cef19e2e7eac11ba4e6))
+* **deps:** update rust crate signal-hook to 0.3.15 ([cf6be44](https://github.com/cailloumajor/mongodb-scraper/commit/cf6be44ed9e3670d2b899375fc3fcee5876d6867))
+* **deps:** update rust crate tokio-stream to 0.1.12 ([ab4c297](https://github.com/cailloumajor/mongodb-scraper/commit/ab4c2972c5d17d51a408f69a5cc1eadbf18ef1a9))
+* **deps:** update rust docker tag to v1.67.1 ([8db3023](https://github.com/cailloumajor/mongodb-scraper/commit/8db302366959930cf827ea83607d0fce45c44b74))
+* **deps:** update tonistiigi/xx docker tag to v1.2.1 ([fe03239](https://github.com/cailloumajor/mongodb-scraper/commit/fe03239fcc2494c236527933a67a223d10a65717))
+* fetch crates before build targets separation ([3d813db](https://github.com/cailloumajor/mongodb-scraper/commit/3d813dba4a27cd5d2b997104d3923acb69d6965e))
+
 ## [2.0.1](https://github.com/cailloumajor/mongodb-scraper/compare/v2.0.0...v2.0.1) (2023-02-08)
 
 
