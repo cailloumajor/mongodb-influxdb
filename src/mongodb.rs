@@ -13,7 +13,7 @@ use tokio::sync::{mpsc, oneshot};
 use tokio::task::JoinHandle;
 use tokio::time::{self, MissedTickBehavior};
 use tokio_stream::wrappers::IntervalStream;
-use tracing::{error, info, info_span, instrument, warn, Instrument as _};
+use tracing::{debug, error, info, info_span, instrument, warn, Instrument as _};
 
 use crate::line_protocol::{DataPoint, DataPointCreateError};
 
@@ -160,6 +160,7 @@ impl Collection {
                 info!(status = "started");
 
                 while let Some(outcome_tx) = rx.recv().await {
+                    debug!(msg = "request received");
                     let outcome = match self.0.estimated_document_count(options.clone()).await {
                         Ok(_) => true,
                         Err(err) => {

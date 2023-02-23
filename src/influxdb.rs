@@ -4,7 +4,7 @@ use clap::Args;
 use serde::Deserialize;
 use tokio::sync::{mpsc, oneshot};
 use tokio::task::JoinHandle;
-use tracing::{error, info, info_span, instrument, Instrument};
+use tracing::{debug, error, info, info_span, instrument, Instrument};
 use trillium_tokio::TcpConnector;
 use url::Url;
 
@@ -139,6 +139,7 @@ impl Client {
                 info!(status = "started");
 
                 while let Some(outcome_tx) = rx.recv().await {
+                    debug!(msg = "request received");
                     let outcome = self.write(String::new()).await.is_ok();
                     if outcome_tx.send(outcome).is_err() {
                         error!(kind = "outcome channel sending");
