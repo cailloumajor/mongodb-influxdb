@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.1.1](https://github.com/cailloumajor/mongodb-scraper/compare/v2.1.0...v2.1.1) (2023-03-02)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate clap to 4.1.7 ([15fbb5b](https://github.com/cailloumajor/mongodb-scraper/commit/15fbb5b3eec30c271ffc1b9a810c41d9b4a50d95))
+* **deps:** update rust crate clap to 4.1.8 ([05d5e00](https://github.com/cailloumajor/mongodb-scraper/commit/05d5e00b01e4b1a339a39104f851af14138251c2))
+* **deps:** update rust crate mongodb to 2.4.0 ([fd9fd50](https://github.com/cailloumajor/mongodb-scraper/commit/fd9fd500e844cab91efdcacfe55ac22956335ddd))
+* **deps:** update rust crate tokio to 1.26.0 ([c01167d](https://github.com/cailloumajor/mongodb-scraper/commit/c01167dec92f530d957d17f93bc21aada2706777))
+* use clone wherever to_owned is not necessary ([1af0b47](https://github.com/cailloumajor/mongodb-scraper/commit/1af0b478d65d8d8e384495b093eca5f3b583b8a1))
+
 ## [2.1.0](https://github.com/cailloumajor/mongodb-scraper/compare/v2.0.1...v2.1.0) (2023-02-23)
 
 
