@@ -39,32 +39,32 @@ impl DataPoint {
         let mut fields: BTreeMap<String, FieldValue> = BTreeMap::new();
         for (key, value) in data_doc.val {
             let field_value = value.try_into().map_err(|msg| DataPointCreateError {
-                doc_id: data_doc.id.to_owned(),
-                field: key.to_owned(),
+                doc_id: data_doc.id.clone(),
+                field: key.clone(),
                 msg,
             })?;
-            fields.insert(key.to_owned(), field_value);
+            fields.insert(key, field_value);
         }
         for key in tags_age {
             let source_timestamp: u64 = data_doc
                 .ts
                 .get(key)
                 .ok_or(DataPointCreateError {
-                    doc_id: data_doc.id.to_owned(),
-                    field: key.to_owned(),
+                    doc_id: data_doc.id.clone(),
+                    field: key.clone(),
                     msg: "missing source timestamp for field",
                 })?
                 .as_datetime()
                 .ok_or(DataPointCreateError {
-                    doc_id: data_doc.id.to_owned(),
-                    field: key.to_owned(),
+                    doc_id: data_doc.id.clone(),
+                    field: key.clone(),
                     msg: "invalid datetime",
                 })?
                 .timestamp_millis()
                 .try_into()
                 .map_err(|_| DataPointCreateError {
-                    doc_id: data_doc.id.to_owned(),
-                    field: key.to_owned(),
+                    doc_id: data_doc.id.clone(),
+                    field: key.clone(),
                     msg: "timestamp out of range",
                 })?;
             let value = FieldValue::UInteger(timestamp - source_timestamp / 1000);

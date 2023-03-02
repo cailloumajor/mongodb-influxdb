@@ -47,9 +47,9 @@ pub(crate) struct Client {
 
 impl Client {
     pub(crate) fn new(config: &Config) -> Self {
-        let url = config.influxdb_url.to_owned();
-        let bucket = config.influxdb_bucket.to_owned();
-        let org = config.influxdb_org.to_owned();
+        let url = config.influxdb_url.clone();
+        let bucket = config.influxdb_bucket.clone();
+        let org = config.influxdb_org.clone();
         let auth_header = format!("Token {}", config.influxdb_api_token);
         let http_client = HttpClient::new().with_default_pool();
 
@@ -73,7 +73,7 @@ impl Client {
         let mut conn = match self
             .http_client
             .post(url)
-            .with_header("Authorization", self.auth_header.to_owned())
+            .with_header("Authorization", self.auth_header.clone())
             .with_header("Content-Type", "text/plain; charset=utf-8")
             .with_body(line_protocol)
             .await
