@@ -42,6 +42,3 @@ features = [ "std", "log-tracer" ]
 version = "0.3.16"
 default-features = false
 features = [ "smallvec", "fmt", "ansi" ]
-
-[dev-dependencies]
-trillium-testing = { version = "0.4.1", features = [ "tokio" ] }
