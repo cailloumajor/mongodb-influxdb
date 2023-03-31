@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.3](https://github.com/cailloumajor/mongodb-scraper/compare/v2.1.2...v2.1.3) (2023-03-31)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate futures-util to 0.3.28 ([c9efdd9](https://github.com/cailloumajor/mongodb-scraper/commit/c9efdd94f61b61662a905e05b12466daf3ec0db5))
+
 ## [2.1.2](https://github.com/cailloumajor/mongodb-scraper/compare/v2.1.1...v2.1.2) (2023-03-30)
 
 
