@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/cailloumajor/mongodb-scraper/compare/v2.1.4...v2.2.0) (2023-04-03)
+
+
+### Features
+
+* get tags for which to record age from document ([142817a](https://github.com/cailloumajor/mongodb-scraper/commit/142817adcdade24d03eba5f41abe2b21db9e614e))
+
 ## [2.1.4](https://github.com/cailloumajor/mongodb-scraper/compare/v2.1.3...v2.1.4) (2023-04-03)
 
 
