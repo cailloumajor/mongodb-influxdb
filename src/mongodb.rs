@@ -39,9 +39,10 @@ pub(crate) struct Config {
 #[serde(rename_all = "camelCase")]
 pub(crate) struct DataDocument {
     #[serde(rename = "_id")]
-    pub id: String,
-    pub val: Document,
-    pub ts: Document,
+    pub(crate) id: String,
+    pub(crate) record_age_for_tags: Vec<String>,
+    pub(crate) val: Document,
+    pub(crate) ts: Document,
     updated_since: u64,
 }
 
@@ -67,7 +68,6 @@ impl Collection {
     pub(crate) fn periodic_scrape(
         self: Arc<Self>,
         period: Duration,
-        tags_age: Arc<Vec<String>>,
         data_points_tx: mpsc::Sender<Vec<DataPoint>>,
     ) -> (AbortHandle, JoinHandle<()>) {
         let (abort_handle, abort_registration) = AbortHandle::new_pair();
@@ -83,6 +83,7 @@ impl Collection {
                     "unit": "millisecond",
                 },
             },
+            "recordAgeForTags": true,
             "val": true,
             "ts": true,
         };
@@ -122,9 +123,7 @@ impl Collection {
                         .as_secs();
                     let data_points: Vec<_> = match docs
                         .into_iter()
-                        .map(|doc| {
-                            DataPoint::create(doc, measurement.clone(), &tags_age, timestamp)
-                        })
+                        .map(|doc| DataPoint::create(doc, measurement.clone(), timestamp))
                         .collect()
                     {
                         Ok(vec) => vec,

@@ -24,7 +24,6 @@ services:
       - --verbose
     environment:
       - INTERVAL=2s
-      - TAGS_AGE=first,third
       - MONGODB_DATABASE=testdb
       - MONGODB_COLLECTION=testcoll
       - INFLUXDB_API_TOKEN=integration_tests_token
