@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.1.4](https://github.com/cailloumajor/mongodb-scraper/compare/v2.1.3...v2.1.4) (2023-04-03)
+
+
+### Bug Fixes
+
+* create a newtype to handle level filter ([b5444b5](https://github.com/cailloumajor/mongodb-scraper/commit/b5444b58ec33cdcd9d332eb7a3fad88f0c601a6a))
+* **deps:** update rust crate clap-verbosity-flag to 2.0.1 ([ece8488](https://github.com/cailloumajor/mongodb-scraper/commit/ece848814f7f9c782354e5047057b9a70e738b27))
+
 ## [2.1.3](https://github.com/cailloumajor/mongodb-scraper/compare/v2.1.2...v2.1.3) (2023-03-31)
 
 
