@@ -47,8 +47,6 @@ Usage: mongodb-scraper [OPTIONS] --mongodb-database <MONGODB_DATABASE> --mongodb
 Options:
       --interval <INTERVAL>
           Scraping interval [env: INTERVAL=] [default: 1m]
-      --tags-age <TAGS_AGE>
-          Comma-separated tags for which to add an age field [env: TAGS_AGE=]
       --mongodb-uri <MONGODB_URI>
           URI of MongoDB server [env: MONGODB_URI=] [default: mongodb://mongodb]
       --mongodb-database <MONGODB_DATABASE>

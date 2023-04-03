@@ -27,10 +27,6 @@ struct Args {
     #[arg(env, long, default_value = "1m")]
     interval: Duration,
 
-    /// Comma-separated tags for which to add an age field
-    #[arg(env, long, value_delimiter = ',')]
-    tags_age: Vec<String>,
-
     #[command(flatten)]
     mongodb: mongodb::Config,
 
@@ -70,11 +66,9 @@ async fn main() -> anyhow::Result<()> {
 
     let mongodb_collection = mongodb::Collection::create(&args.mongodb).await?;
     let mongodb_collection = Arc::new(mongodb_collection);
-    let (scrape_abort, scrape_task) = mongodb_collection.clone().periodic_scrape(
-        args.interval.into(),
-        Arc::new(args.tags_age),
-        data_points_tx,
-    );
+    let (scrape_abort, scrape_task) = mongodb_collection
+        .clone()
+        .periodic_scrape(args.interval.into(), data_points_tx);
     let (mongodb_health_tx, mongodb_health_task) = mongodb_collection.handle_health();
 
     let health_senders = vec![

@@ -33,7 +33,6 @@ impl DataPoint {
     pub(crate) fn create(
         data_doc: DataDocument,
         measurement: String,
-        tags_age: &[String],
         timestamp: u64, // in seconds
     ) -> Result<Self, DataPointCreateError> {
         let mut fields: BTreeMap<String, FieldValue> = BTreeMap::new();
@@ -45,30 +44,30 @@ impl DataPoint {
             })?;
             fields.insert(key, field_value);
         }
-        for key in tags_age {
+        for aged_tag in data_doc.record_age_for_tags {
             let source_timestamp: u64 = data_doc
                 .ts
-                .get(key)
+                .get(&aged_tag)
                 .ok_or(DataPointCreateError {
                     doc_id: data_doc.id.clone(),
-                    field: key.clone(),
+                    field: aged_tag.clone(),
                     msg: "missing source timestamp for field",
                 })?
                 .as_datetime()
                 .ok_or(DataPointCreateError {
                     doc_id: data_doc.id.clone(),
-                    field: key.clone(),
+                    field: aged_tag.clone(),
                     msg: "invalid datetime",
                 })?
                 .timestamp_millis()
                 .try_into()
                 .map_err(|_| DataPointCreateError {
                     doc_id: data_doc.id.clone(),
-                    field: key.clone(),
+                    field: aged_tag.clone(),
                     msg: "timestamp out of range",
                 })?;
             let value = FieldValue::UInteger(timestamp - source_timestamp / 1000);
-            fields.insert(format!("{key}Age"), value);
+            fields.insert(aged_tag + "Age", value);
         }
 
         let tags = [("id".into(), data_doc.id)].into();
@@ -133,6 +132,10 @@ mod tests {
         let document = doc! {
             "_id": "anid",
             "updatedSince": 0,
+            "recordAgeForTags": [
+                "some",
+                "other",
+            ],
             "val": {
                 "first": true,
                 "second": "a_string",
@@ -147,15 +150,8 @@ mod tests {
         };
         let data_document: DataDocument = bson::from_document(document).unwrap();
         let measurement = String::from("some_measurement");
-        let tags_validity_time = &["some".to_string(), "other".to_string()];
 
-        let data_point = DataPoint::create(
-            data_document,
-            measurement,
-            tags_validity_time,
-            now_secs as u64,
-        )
-        .unwrap();
+        let data_point = DataPoint::create(data_document, measurement, now_secs as u64).unwrap();
 
         assert_eq!(data_point.measurement, "some_measurement");
         assert_eq!(data_point.tags["id"], "anid");
