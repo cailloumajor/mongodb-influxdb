@@ -12,7 +12,7 @@ struct Replacer {
 
 impl Replacer {
     fn new(from: &[&str], to: &'static [&str]) -> Self {
-        let aho_corasick = AhoCorasick::new_auto_configured(from);
+        let aho_corasick = AhoCorasick::new(from).unwrap();
         Self { aho_corasick, to }
     }
 
