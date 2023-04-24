@@ -5,12 +5,11 @@ use serde::Deserialize;
 use tokio::sync::{mpsc, oneshot};
 use tokio::task::JoinHandle;
 use tracing::{debug, error, info, info_span, instrument, Instrument};
-use trillium_tokio::TcpConnector;
+use trillium_client::Client as HttpClient;
+use trillium_tokio::ClientConfig;
 use url::Url;
 
 use crate::line_protocol::DataPoint;
-
-type HttpClient = trillium_client::Client<TcpConnector>;
 
 #[derive(Args)]
 #[group(skip)]
@@ -51,7 +50,7 @@ impl Client {
         let bucket = config.influxdb_bucket.clone();
         let org = config.influxdb_org.clone();
         let auth_header = format!("Token {}", config.influxdb_api_token);
-        let http_client = HttpClient::new().with_default_pool();
+        let http_client = HttpClient::new(ClientConfig::default()).with_default_pool();
 
         Self {
             url,
