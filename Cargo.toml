@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 aho-corasick = "1.0.1"
-anyhow = "1.0.70"
+anyhow = "1.0.71"
 clap-verbosity-flag = "2.0.1"
 futures-util = "0.3.28"
 humantime = "2.1.0"
