@@ -30,7 +30,7 @@ default-features = false
 features = [ "std", "help", "usage", "error-context", "derive", "env" ]
 
 [dependencies.tokio]
-version = "1.28.0"
+version = "1.28.1"
 features = [ "macros", "net", "rt", "sync", "time" ]
 
 [dependencies.tracing-log]
