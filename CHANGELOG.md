@@ -1,5 +1,37 @@
 # Changelog
 
+## [2.3.0](https://github.com/cailloumajor/mongodb-scraper/compare/v2.2.0...v2.3.0) (2023-05-17)
+
+
+### Features
+
+* move from trillium-client to reqwest ([fd56658](https://github.com/cailloumajor/mongodb-scraper/commit/fd56658eeb673475418cb12b6824330592661bf6))
+
+
+### Bug Fixes
+
+* **deps:** downgrade tracing crate to v0.1.37 ([5983e4f](https://github.com/cailloumajor/mongodb-scraper/commit/5983e4facd895e6599b6e898b36364684d4085a6))
+* **deps:** update rust crate aho-corasick to 1.0.1 ([937a4e6](https://github.com/cailloumajor/mongodb-scraper/commit/937a4e606e75268695932a03814d5551b3065c6f))
+* **deps:** update rust crate aho-corasick to v1 ([7526c56](https://github.com/cailloumajor/mongodb-scraper/commit/7526c56eef9459937ad3dc828a6372ce42ff0b8e))
+* **deps:** update rust crate anyhow to 1.0.71 ([f664e1c](https://github.com/cailloumajor/mongodb-scraper/commit/f664e1caad23f734f7074008eb3276cbcadf3e42))
+* **deps:** update rust crate clap to 4.2.2 ([876d493](https://github.com/cailloumajor/mongodb-scraper/commit/876d493bdc0461e92670745040ad1430bb82c831))
+* **deps:** update rust crate clap to 4.2.4 ([a976d41](https://github.com/cailloumajor/mongodb-scraper/commit/a976d41768c29891af4894519eae306762c7e868))
+* **deps:** update rust crate clap to 4.2.5 ([8628983](https://github.com/cailloumajor/mongodb-scraper/commit/86289830022ec9c9a58ef753ec4360c714bfb1c8))
+* **deps:** update rust crate clap to 4.2.7 ([7fb5b52](https://github.com/cailloumajor/mongodb-scraper/commit/7fb5b52ef9f475dba16f8159cde29e0464990a47))
+* **deps:** update rust crate mongodb to 2.5.0 ([d503909](https://github.com/cailloumajor/mongodb-scraper/commit/d503909410cb331f3fc7ac2f5146317bae0ba01d))
+* **deps:** update rust crate serde to 1.0.160 ([198d004](https://github.com/cailloumajor/mongodb-scraper/commit/198d00444290f967dc260989e03c4d52dbb45510))
+* **deps:** update rust crate serde to 1.0.162 ([f776efe](https://github.com/cailloumajor/mongodb-scraper/commit/f776efe90d4d37c156022928a2993176c4ea25b1))
+* **deps:** update rust crate serde to 1.0.163 ([c3b8130](https://github.com/cailloumajor/mongodb-scraper/commit/c3b8130a61465defd4954e070150bda3fc94abcf))
+* **deps:** update rust crate tokio to 1.28.0 ([22b369b](https://github.com/cailloumajor/mongodb-scraper/commit/22b369b221e11e2f3a26ae7e3de0cf50b8f9e115))
+* **deps:** update rust crate tokio to 1.28.1 ([a281023](https://github.com/cailloumajor/mongodb-scraper/commit/a281023773accc5ea79c762f548cb1a9a992c812))
+* **deps:** update rust crate tokio-stream to 0.1.13 ([5fb55d8](https://github.com/cailloumajor/mongodb-scraper/commit/5fb55d83852ee3796246d6cc3b6b43e5cf099be6))
+* **deps:** update rust crate tokio-stream to 0.1.14 ([b3728cd](https://github.com/cailloumajor/mongodb-scraper/commit/b3728cd59f77b2624d0c82e9ce69df209a52d8d4))
+* **deps:** update rust crate tracing to 0.1.38 ([ba9afb0](https://github.com/cailloumajor/mongodb-scraper/commit/ba9afb0b38498f5682f227ee1dc6d26341be7e73))
+* **deps:** update rust crate tracing-subscriber to 0.3.17 ([70b386d](https://github.com/cailloumajor/mongodb-scraper/commit/70b386d6ad56ea7c43fe34b52efb5ddfebefa04a))
+* **deps:** update rust docker tag to v1.69.0 ([8932909](https://github.com/cailloumajor/mongodb-scraper/commit/89329098c7d6ba2eb550926c22ba198e5807dda1))
+* **deps:** upgrade trillium crates ([62ecb97](https://github.com/cailloumajor/mongodb-scraper/commit/62ecb977adf36c67e645b4d4d6c25009d5eab1e3))
+* use aho-corasick v1 API ([f35c733](https://github.com/cailloumajor/mongodb-scraper/commit/f35c7331e24ef82554ed6595334be2376860268d))
+
 ## [2.2.0](https://github.com/cailloumajor/mongodb-scraper/compare/v2.1.4...v2.2.0) (2023-04-03)
 
 
