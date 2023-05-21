@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.1](https://github.com/cailloumajor/mongodb-scraper/compare/v2.3.0...v2.3.1) (2023-05-21)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate clap to 4.3.0 ([4ade32d](https://github.com/cailloumajor/mongodb-scraper/commit/4ade32d86a19b1c5d8ef5d0d88b35f910ed84b9c))
+
 ## [2.3.0](https://github.com/cailloumajor/mongodb-scraper/compare/v2.2.0...v2.3.0) (2023-05-17)
 
 
