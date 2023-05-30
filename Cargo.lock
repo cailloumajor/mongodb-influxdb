@@ -959,7 +959,7 @@ dependencies = [
 
 [[package]]
 name = "mongodb-scraper"
-version = "2.3.1"
+version = "2.3.2"
 dependencies = [
  "aho-corasick",
  "anyhow",

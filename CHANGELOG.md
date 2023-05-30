@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.2](https://github.com/cailloumajor/mongodb-scraper/compare/v2.3.1...v2.3.2) (2023-05-30)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate tokio to 1.28.2 ([39ecfad](https://github.com/cailloumajor/mongodb-scraper/commit/39ecfade3cdc5e2dec71a2d2b67a3737388d321d))
+
 ## [2.3.1](https://github.com/cailloumajor/mongodb-scraper/compare/v2.3.0...v2.3.1) (2023-05-21)
 
 
