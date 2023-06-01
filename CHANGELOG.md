@@ -1,5 +1,23 @@
 # Changelog
 
+## [3.0.0](https://github.com/cailloumajor/mongodb-influxdb/compare/v2.3.1...v3.0.0) (2023-06-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove tags age recording
+* project rename
+
+### Features
+
+* project rename ([572a836](https://github.com/cailloumajor/mongodb-influxdb/commit/572a836cda83b3d478165c2555b0224540fe073f))
+* remove tags age recording ([759028c](https://github.com/cailloumajor/mongodb-influxdb/commit/759028c98f8564c03544578e6c58084b478c0554))
+
+
+### Bug Fixes
+
+* **deps:** update rust crate tokio to 1.28.2 ([39ecfad](https://github.com/cailloumajor/mongodb-influxdb/commit/39ecfade3cdc5e2dec71a2d2b67a3737388d321d))
+
 ## [2.3.1](https://github.com/cailloumajor/mongodb-scraper/compare/v2.3.0...v2.3.1) (2023-05-21)
 
 

@@ -959,7 +959,7 @@ dependencies = [
 
 [[package]]
 name = "mongodb-influxdb"
-version = "2.3.1"
+version = "3.0.0"
 dependencies = [
  "aho-corasick",
  "anyhow",
