@@ -6,12 +6,13 @@ use clap_verbosity_flag::{InfoLevel, Verbosity};
 use futures_util::future::AbortHandle;
 use futures_util::StreamExt;
 use humantime::Duration;
-use mongodb_scraper::HEALTH_SOCKET_PATH;
 use signal_hook::consts::TERM_SIGNALS;
 use signal_hook::low_level::signal_name;
 use signal_hook_tokio::Signals;
 use tracing::{info, instrument};
 use tracing_log::LogTracer;
+
+use mongodb_influxdb::HEALTH_SOCKET_PATH;
 
 mod health;
 mod influxdb;

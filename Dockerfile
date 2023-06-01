@@ -39,4 +39,4 @@ HEALTHCHECK CMD ["/usr/local/bin/healthcheck"]
 
 USER nonroot
 EXPOSE 8080
-CMD ["/usr/local/bin/mongodb-scraper"]
+CMD ["/usr/local/bin/mongodb-influxdb"]

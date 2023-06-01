@@ -17,10 +17,10 @@ services:
       - DOCKER_INFLUXDB_INIT_BUCKET=integration_tests_bucket
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=integration_tests_token
 
-  mongodb-scraper:
+  mongodb-influxdb:
     build: ..
     command:
-      - /usr/local/bin/mongodb-scraper
+      - /usr/local/bin/mongodb-influxdb
       - --verbose
     environment:
       - INTERVAL=2s
