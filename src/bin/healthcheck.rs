@@ -2,7 +2,7 @@ use anyhow::anyhow;
 use tokio::io::AsyncReadExt;
 use tokio::net::UnixStream;
 
-use mongodb_scraper::HEALTH_SOCKET_PATH;
+use mongodb_influxdb::HEALTH_SOCKET_PATH;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {

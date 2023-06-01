@@ -1,4 +1,4 @@
-# mongodb-scraper
+# mongodb-influxdb
 
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
@@ -41,8 +41,8 @@ sequenceDiagram
 ## Usage
 
 ```ShellSession
-$ mongodb-scraper --help
-Usage: mongodb-scraper [OPTIONS] --mongodb-database <MONGODB_DATABASE> --mongodb-collection <MONGODB_COLLECTION> --influxdb-api-token <INFLUXDB_API_TOKEN> --influxdb-org <INFLUXDB_ORG> --influxdb-bucket <INFLUXDB_BUCKET>
+$ mongodb-influxdb --help
+Usage: mongodb-influxdb [OPTIONS] --mongodb-database <MONGODB_DATABASE> --mongodb-collection <MONGODB_COLLECTION> --influxdb-api-token <INFLUXDB_API_TOKEN> --influxdb-org <INFLUXDB_ORG> --influxdb-bucket <INFLUXDB_BUCKET>
 
 Options:
       --interval <INTERVAL>

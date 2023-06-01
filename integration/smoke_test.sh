@@ -49,19 +49,19 @@ docker compose build
 docker compose up -d --quiet-pull
 
 
-# Wait for mongodb-scraper to be healthy
+# Wait for mongodb-influxdb to be healthy
 max_attempts=6
 wait_success=
 for i in $(seq 1 $max_attempts); do
-    if docker compose exec mongodb-scraper /usr/local/bin/healthcheck; then
+    if docker compose exec mongodb-influxdb /usr/local/bin/healthcheck; then
         wait_success="true"
         break
     fi
-    echo "Waiting for mongodb-scraper to be healthy: try #$i failed" >&2
+    echo "Waiting for mongodb-influxdb to be healthy: try #$i failed" >&2
     [[ $i != "$max_attempts" ]] && sleep 5
 done
 if [ "$wait_success" != "true" ]; then
-    die "Failure waiting for mongodb-scraper to be healthy"
+    die "Failure waiting for mongodb-influxdb to be healthy"
 fi
 
 # Feed MongoDB with data
