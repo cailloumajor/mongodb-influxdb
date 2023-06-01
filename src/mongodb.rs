@@ -40,9 +40,7 @@ pub(crate) struct Config {
 pub(crate) struct DataDocument {
     #[serde(rename = "_id")]
     pub(crate) id: String,
-    pub(crate) record_age_for_tags: Vec<String>,
     pub(crate) val: Document,
-    pub(crate) ts: Document,
     updated_since: u64,
 }
 
@@ -83,9 +81,7 @@ impl Collection {
                     "unit": "millisecond",
                 },
             },
-            "recordAgeForTags": true,
             "val": true,
-            "ts": true,
         };
         let options = FindOptions::builder().projection(projection).build();
 
