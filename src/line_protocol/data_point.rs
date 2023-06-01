@@ -44,31 +44,6 @@ impl DataPoint {
             })?;
             fields.insert(key, field_value);
         }
-        for aged_tag in data_doc.record_age_for_tags {
-            let source_timestamp: u64 = data_doc
-                .ts
-                .get(&aged_tag)
-                .ok_or(DataPointCreateError {
-                    doc_id: data_doc.id.clone(),
-                    field: aged_tag.clone(),
-                    msg: "missing source timestamp for field",
-                })?
-                .as_datetime()
-                .ok_or(DataPointCreateError {
-                    doc_id: data_doc.id.clone(),
-                    field: aged_tag.clone(),
-                    msg: "invalid datetime",
-                })?
-                .timestamp_millis()
-                .try_into()
-                .map_err(|_| DataPointCreateError {
-                    doc_id: data_doc.id.clone(),
-                    field: aged_tag.clone(),
-                    msg: "timestamp out of range",
-                })?;
-            let value = FieldValue::UInteger(timestamp - source_timestamp / 1000);
-            fields.insert(aged_tag + "Age", value);
-        }
 
         let tags = [("id".into(), data_doc.id)].into();
 
@@ -132,20 +107,11 @@ mod tests {
         let document = doc! {
             "_id": "anid",
             "updatedSince": 0,
-            "recordAgeForTags": [
-                "some",
-                "other",
-            ],
             "val": {
                 "first": true,
                 "second": "a_string",
                 "third": 37.5,
                 "fourth": 42,
-            },
-            "ts": {
-                "some": DateTime::from_millis((now_secs - 42) * 1000),
-                "other": DateTime::from_millis((now_secs - 3600) * 1000),
-                "notRelevant": DateTime::from_millis((now_secs - 5) * 1000),
             },
         };
         let data_document: DataDocument = bson::from_document(document).unwrap();
@@ -162,9 +128,6 @@ mod tests {
         );
         assert_eq!(data_point.fields["third"], FieldValue::Float(37.5));
         assert_eq!(data_point.fields["fourth"], FieldValue::Integer(42));
-        assert_eq!(data_point.fields["someAge"], FieldValue::UInteger(42));
-        assert_eq!(data_point.fields["otherAge"], FieldValue::UInteger(3600));
-        assert!(data_point.fields.get("notRelevantAge").is_none());
     }
 
     #[test]

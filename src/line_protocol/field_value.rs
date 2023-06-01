@@ -11,11 +11,13 @@ lazy_static! {
         Replacer::new(&[r#"""#, r#"\"#], &[r#"\""#, r#"\\"#]);
 }
 
+/// InfluxDB line protocol field value.
+///
+/// https://docs.influxdata.com/influxdb/v2.7/reference/syntax/line-protocol/#field-set
 #[derive(Debug, PartialEq)]
 pub(super) enum FieldValue {
     Float(f64),
     Integer(i64),
-    UInteger(u64),
     String(String),
     Boolean(bool),
 }
@@ -32,11 +34,6 @@ impl fmt::Display for FieldValue {
                 let mut buffer = itoa::Buffer::new();
                 let out = buffer.format(i);
                 write!(f, "{out}i")
-            }
-            Self::UInteger(i) => {
-                let mut buffer = itoa::Buffer::new();
-                let out = buffer.format(i);
-                write!(f, "{out}u")
             }
             Self::String(ref s) => {
                 let escaped = FIELD_VALUE_REPLACER.replace_all(s);
@@ -137,13 +134,6 @@ mod tests {
         let field_value = FieldValue::Integer(-546130);
 
         assert_eq!(field_value.to_string(), "-546130i");
-    }
-
-    #[test]
-    fn display_uinteger() {
-        let field_value = FieldValue::UInteger(549844);
-
-        assert_eq!(field_value.to_string(), "549844u");
     }
 
     #[test]

@@ -16,7 +16,6 @@ Data points will have following characteristics:
 
 - document primary key (`_id`) as a tag value, with `id` as the tag key;
 - each key and value pair in the `val` sub-document, respectively as field key and value;
-- each key and value pair in the `ts` sub-document, respectively as field key (appended with `Age`) and value;
 
 ## Data flow
 

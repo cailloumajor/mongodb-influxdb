@@ -7,10 +7,7 @@ check = (r) =>
     r.integer >= 200 and
     r.integer <= 300 and
     r.float >= 10.0 and
-    r.float <= 25.0 and
-    r.firstAge >= 1 and
-    not exists r.secondAge and
-    r.thirdAge >= 1
+    r.float <= 25.0
 
 want = array.from(rows: [{ satisfies: 4 }])
 
