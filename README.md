@@ -4,13 +4,11 @@
 
 ## Specifications
 
-### MongoDB
+This service is responsible for data flow between MongoDB and InfluxDB. It has following roles.
 
-This service will query the configured database and collection at regular intervals.
+### Recording data from MongoDB to InfluxDB
 
-### InfluxDB
-
-After having obtained documents from MongoDB, this service will send data points to InfluxDB (line protocol), one for each document in the collection. The measurement will be set to the namespace of the collection.
+This service will query the configured database and collection at regular interval (configured by a CLI argument), and send data points to InfluxDB (line protocol), one for each document in the collection. The measurement will be set to the namespace of the collection.
 
 Data points will have following characteristics:
 
@@ -23,17 +21,15 @@ Data points will have following characteristics:
 sequenceDiagram
     participant MongoDB
     participant Me as This service
-    participant TSDB
-    critical
-        Me->>+MongoDB: Establish connection
-        MongoDB-->>-Me: Connection established
-    end
+    participant TSDB as InfluxDB
     loop Each collect interval
         Me->>+MongoDB: Query documents
         MongoDB-->>-Me: Replies with documents
         activate Me
-        Me-)TSDB: Sends data points
+        Me-->Me: Converts documents to line protocol
         deactivate Me
+        Me->>+TSDB: Writes data points
+        TSDB-->>-Me: Sends write result
     end
 ```
 
