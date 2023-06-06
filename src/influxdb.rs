@@ -1,12 +1,16 @@
+use std::io::Write;
+
 use arcstr::ArcStr;
 use clap::Args;
+use flate2::write::GzEncoder;
 use reqwest::{header, Client as HttpClient};
 use serde::Deserialize;
-use tokio::sync::{mpsc, oneshot};
-use tokio::task::JoinHandle;
+use tokio::sync::mpsc;
+use tokio::task::{spawn_blocking, JoinHandle};
 use tracing::{debug, error, info, info_span, instrument, Instrument};
 use url::Url;
 
+use crate::health::HealthResponder;
 use crate::line_protocol::DataPoint;
 
 #[derive(Args)]
@@ -68,12 +72,26 @@ impl Client {
             .append_pair("org", &self.org)
             .append_pair("precision", "s");
 
+        let body = spawn_blocking(move || {
+            let mut encoder = GzEncoder::new(Vec::new(), Default::default());
+            encoder.write_all(line_protocol.as_bytes())?;
+            encoder.finish()
+        })
+        .await
+        .map_err(|err| {
+            error!(when = "joining compression task", %err);
+        })?
+        .map_err(|err| {
+            error!(when = "compressing body", %err);
+        })?;
+
         let resp = self
             .http_client
             .post(url)
             .header(header::AUTHORIZATION, self.auth_header.as_str())
+            .header(header::CONTENT_ENCODING, "gzip")
             .header(header::CONTENT_TYPE, "text/plain; charset=utf-8")
-            .body(line_protocol)
+            .body(body)
             .send()
             .await
             .map_err(|err| {
@@ -119,8 +137,8 @@ impl Client {
         (tx, task)
     }
 
-    pub(crate) fn handle_health(&self) -> (mpsc::Sender<oneshot::Sender<bool>>, JoinHandle<()>) {
-        let (tx, mut rx) = mpsc::channel::<oneshot::Sender<bool>>(1);
+    pub(crate) fn handle_health(&self) -> (mpsc::Sender<HealthResponder>, JoinHandle<()>) {
+        let (tx, mut rx) = mpsc::channel::<HealthResponder>(1);
         let cloned_self = self.clone();
 
         let task = tokio::spawn(
@@ -181,6 +199,7 @@ mod tests {
                         Matcher::UrlEncoded("precision".into(), "s".into()),
                     ]))
                     .match_header("Authorization", "Token sometoken")
+                    .match_header("Content-Encoding", "gzip")
                     .match_header("Content-Type", "text/plain; charset=utf-8")
                     .with_status(500)
                     .create_async()
@@ -199,6 +218,13 @@ mod tests {
 
             #[tokio::test]
             async fn success() {
+                // Generated under linux, using `printf "some_line_protocol" | gzip | xxd -i`,
+                // and replacing the `OS` byte (see RFC1952, section 2.3.1) with 255 (unknown).
+                let expected_body = vec![
+                    0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x2b, 0xce, 0xcf,
+                    0x4d, 0x8d, 0xcf, 0xc9, 0xcc, 0x4b, 0x8d, 0x2f, 0x28, 0xca, 0x2f, 0xc9, 0x4f,
+                    0xce, 0xcf, 0x01, 0x00, 0xd5, 0x03, 0x68, 0xd5, 0x12, 0x00, 0x00, 0x00,
+                ];
                 let mut server = Server::new_async().await;
                 let mock = server
                     .mock("POST", "/api/v2/write")
@@ -208,7 +234,9 @@ mod tests {
                         Matcher::UrlEncoded("precision".into(), "s".into()),
                     ]))
                     .match_header("Authorization", "Token sometoken")
+                    .match_header("Content-Encoding", "gzip")
                     .match_header("Content-Type", "text/plain; charset=utf-8")
+                    .match_body(expected_body)
                     .create_async()
                     .await;
                 let config = Config {

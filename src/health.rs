@@ -11,10 +11,12 @@ use tokio::task::JoinHandle;
 use tokio_stream::wrappers::UnixListenerStream;
 use tracing::{debug, error, info, info_span, instrument, Instrument};
 
+pub(crate) type HealthResponder = oneshot::Sender<bool>;
+
 #[instrument(skip_all)]
 async fn health_roundtrip(
     subsystem: &str,
-    health_tx: &mpsc::Sender<oneshot::Sender<bool>>,
+    health_tx: &mpsc::Sender<HealthResponder>,
 ) -> Result<(), String> {
     let (tx, rx) = oneshot::channel();
 
@@ -37,7 +39,7 @@ async fn health_roundtrip(
 
 pub(crate) fn listen(
     socket_path: impl AsRef<Path>,
-    health_senders: Vec<(&'static str, mpsc::Sender<oneshot::Sender<bool>>)>,
+    health_senders: Vec<(&'static str, mpsc::Sender<HealthResponder>)>,
 ) -> anyhow::Result<(AbortHandle, JoinHandle<()>)> {
     let (abort_handle, abort_registration) = AbortHandle::new_pair();
     let listener = UnixListener::bind(socket_path).context("error binding socket")?;
@@ -117,7 +119,7 @@ mod tests {
 
         #[tokio::test]
         async fn unhealthy_subsystem() {
-            let (tx, mut rx) = mpsc::channel::<oneshot::Sender<bool>>(1);
+            let (tx, mut rx) = mpsc::channel::<HealthResponder>(1);
             tokio::spawn(async move {
                 let outcome_tx = rx.recv().await.unwrap();
                 outcome_tx.send(false).unwrap();
@@ -127,7 +129,7 @@ mod tests {
 
         #[tokio::test]
         async fn success() {
-            let (tx, mut rx) = mpsc::channel::<oneshot::Sender<bool>>(1);
+            let (tx, mut rx) = mpsc::channel::<HealthResponder>(1);
             tokio::spawn(async move {
                 let outcome_tx = rx.recv().await.unwrap();
                 outcome_tx.send(true).unwrap();
@@ -142,8 +144,8 @@ mod tests {
 
         use super::*;
 
-        fn health_task(outcome: bool) -> mpsc::Sender<oneshot::Sender<bool>> {
-            let (tx, mut rx) = mpsc::channel::<oneshot::Sender<bool>>(1);
+        fn health_task(outcome: bool) -> mpsc::Sender<HealthResponder> {
+            let (tx, mut rx) = mpsc::channel::<HealthResponder>(1);
             tokio::spawn(async move {
                 while let Some(outcome_tx) = rx.recv().await {
                     outcome_tx.send(outcome).unwrap();
