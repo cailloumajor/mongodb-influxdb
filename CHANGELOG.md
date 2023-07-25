@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.0.3](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.2...v3.0.3) (2023-07-25)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate clap to 4.3.15 ([0eaca29](https://github.com/cailloumajor/mongodb-influxdb/commit/0eaca2979f20f7cb287289006aa18ac11fe70d90))
+* **deps:** update rust crate clap to 4.3.17 ([14c71eb](https://github.com/cailloumajor/mongodb-influxdb/commit/14c71ebeb299616add928516d818014e55095ce8))
+* **deps:** update rust crate clap to 4.3.19 ([591c243](https://github.com/cailloumajor/mongodb-influxdb/commit/591c2431cee0131abbc712d3d850254565cbed73))
+* **deps:** update rust crate serde to 1.0.173 ([12f7070](https://github.com/cailloumajor/mongodb-influxdb/commit/12f70709a935ee1603c205b619ef1618a421d928))
+* **deps:** update rust crate serde to 1.0.174 ([9dd94e0](https://github.com/cailloumajor/mongodb-influxdb/commit/9dd94e09b30149d20af8fe04384905aa4952aa9b))
+* **deps:** update rust crate serde to 1.0.175 ([dd1fd62](https://github.com/cailloumajor/mongodb-influxdb/commit/dd1fd62fb29922c53b349f8b791464c00fb73dc1))
+* **deps:** update rust crate signal-hook to 0.3.17 ([03bd137](https://github.com/cailloumajor/mongodb-influxdb/commit/03bd137b69938db5c0076b9f60c6e16941cb2ba1))
+
 ## [3.0.2](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.1...v3.0.2) (2023-07-17)
 
 
