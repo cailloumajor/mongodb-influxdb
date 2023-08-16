@@ -15,7 +15,7 @@ futures-util = "0.3.28"
 humantime = "2.1.0"
 itoa = "1.0.9"
 lazy_static = "1.4.0"
-mongodb = "2.6.0"
+mongodb = "2.6.1"
 ryu = "1.0.15"
 serde = { version = "1.0.183", features = [ "derive" ] }
 signal-hook = { version = "0.3.17", default-features = false }
