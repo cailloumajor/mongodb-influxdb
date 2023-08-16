@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.0.5](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.4...v3.0.5) (2023-08-16)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate aho-corasick to 1.0.4 ([f9817e9](https://github.com/cailloumajor/mongodb-influxdb/commit/f9817e92751a7c4b7e6c5a6eced0493e3f3e8f11))
+* **deps:** update rust crate anyhow to 1.0.74 ([2ec2ee3](https://github.com/cailloumajor/mongodb-influxdb/commit/2ec2ee33b14698b390c8bba85fee7f40e3e63b76))
+* **deps:** update rust crate flate2 to 1.0.27 ([6223ff9](https://github.com/cailloumajor/mongodb-influxdb/commit/6223ff904815c86d929fec423c74f6c427b946e0))
+* **deps:** update rust crate mongodb to 2.6.1 ([bcaccd6](https://github.com/cailloumajor/mongodb-influxdb/commit/bcaccd6a58cb0e17cfb2375516240b3db137192c))
+
 ## [3.0.4](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.3...v3.0.4) (2023-08-14)
 
 
