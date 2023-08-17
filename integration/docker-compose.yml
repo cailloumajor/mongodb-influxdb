@@ -3,7 +3,7 @@ version: "3"
 services:
 
   mongodb:
-    image: mongo:6.0
+    image: mongo:7.0
     volumes:
       - ./push-data.mongodb:/usr/src/push-data.mongodb:ro
 
