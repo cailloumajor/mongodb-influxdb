@@ -9,9 +9,9 @@ use super::field_value::FieldValue;
 use super::Replacer;
 
 lazy_static! {
-    static ref MEASUREMENT_REPLACER: Replacer = Replacer::new(&[",", " "], &[r#"\,"#, r#"\ "#]);
+    static ref MEASUREMENT_REPLACER: Replacer = Replacer::new(&[",", " "], &[r"\,", r"\ "]);
     static ref TAG_KV_FIELD_K_REPLACER: Replacer =
-        Replacer::new(&[",", "=", " "], &[r#"\,"#, r#"\="#, r#"\ "#]);
+        Replacer::new(&[",", "=", " "], &[r"\,", r"\=", r"\ "]);
 }
 
 #[derive(Debug)]
