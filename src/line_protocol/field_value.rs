@@ -7,8 +7,7 @@ use tracing::{error, info_span};
 use super::Replacer;
 
 lazy_static! {
-    static ref FIELD_VALUE_REPLACER: Replacer =
-        Replacer::new(&[r#"""#, r#"\"#], &[r#"\""#, r#"\\"#]);
+    static ref FIELD_VALUE_REPLACER: Replacer = Replacer::new(&[r#"""#, r"\"], &[r#"\""#, r"\\"]);
 }
 
 /// InfluxDB line protocol field value.
