@@ -1033,7 +1033,6 @@ dependencies = [
  "futures-util",
  "humantime",
  "itoa",
- "lazy_static",
  "mockito",
  "mongodb",
  "reqwest",
