@@ -1,18 +1,14 @@
 use std::collections::BTreeMap;
 use std::fmt;
-
-use lazy_static::lazy_static;
+use std::sync::OnceLock;
 
 use crate::mongodb::DataDocument;
 
 use super::field_value::FieldValue;
 use super::Replacer;
 
-lazy_static! {
-    static ref MEASUREMENT_REPLACER: Replacer = Replacer::new(&[",", " "], &[r"\,", r"\ "]);
-    static ref TAG_KV_FIELD_K_REPLACER: Replacer =
-        Replacer::new(&[",", "=", " "], &[r"\,", r"\=", r"\ "]);
-}
+static MEASUREMENT_REPLACER: OnceLock<Replacer> = OnceLock::new();
+static TAG_KV_FIELD_K_REPLACER: OnceLock<Replacer> = OnceLock::new();
 
 #[derive(Debug)]
 pub(crate) struct DataPointCreateError {
@@ -58,15 +54,19 @@ impl DataPoint {
 
 impl fmt::Display for DataPoint {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let escaped_measurement = MEASUREMENT_REPLACER.replace_all(&self.measurement);
+        let measurement_replacer =
+            MEASUREMENT_REPLACER.get_or_init(|| Replacer::new(&[",", " "], &[r"\,", r"\ "]));
+        let tag_field_replacer = TAG_KV_FIELD_K_REPLACER
+            .get_or_init(|| Replacer::new(&[",", "=", " "], &[r"\,", r"\=", r"\ "]));
+        let escaped_measurement = measurement_replacer.replace_all(&self.measurement);
         f.write_str(&escaped_measurement)?;
 
         for (key, value) in &self.tags {
             f.write_str(",")?;
-            let escaped_key = TAG_KV_FIELD_K_REPLACER.replace_all(key);
+            let escaped_key = tag_field_replacer.replace_all(key);
             f.write_str(&escaped_key)?;
             f.write_str("=")?;
-            let escaped_value = TAG_KV_FIELD_K_REPLACER.replace_all(value);
+            let escaped_value = tag_field_replacer.replace_all(value);
             f.write_str(&escaped_value)?;
         }
 
@@ -74,7 +74,7 @@ impl fmt::Display for DataPoint {
 
         let mut fields = self.fields.iter().peekable();
         while let Some((key, value)) = fields.next() {
-            let escaped_key = TAG_KV_FIELD_K_REPLACER.replace_all(key);
+            let escaped_key = tag_field_replacer.replace_all(key);
             f.write_str(&escaped_key)?;
             f.write_str("=")?;
             fmt::Display::fmt(value, f)?;

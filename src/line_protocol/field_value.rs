@@ -1,14 +1,12 @@
 use std::fmt;
+use std::sync::OnceLock;
 
-use lazy_static::lazy_static;
 use mongodb::bson::Bson;
 use tracing::{error, info_span};
 
 use super::Replacer;
 
-lazy_static! {
-    static ref FIELD_VALUE_REPLACER: Replacer = Replacer::new(&[r#"""#, r"\"], &[r#"\""#, r"\\"]);
-}
+static FIELD_VALUE_REPLACER: OnceLock<Replacer> = OnceLock::new();
 
 /// InfluxDB line protocol field value.
 ///
@@ -35,7 +33,9 @@ impl fmt::Display for FieldValue {
                 write!(f, "{out}i")
             }
             Self::String(ref s) => {
-                let escaped = FIELD_VALUE_REPLACER.replace_all(s);
+                let field_value_replacer = FIELD_VALUE_REPLACER
+                    .get_or_init(|| Replacer::new(&[r#"""#, r"\"], &[r#"\""#, r"\\"]));
+                let escaped = field_value_replacer.replace_all(s);
                 f.write_str(r#"""#)?;
                 f.write_str(&escaped)?;
                 f.write_str(r#"""#)
