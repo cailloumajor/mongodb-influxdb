@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.0.8](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.7...v3.0.8) (2023-09-02)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate aho-corasick to 1.0.5 ([9690d49](https://github.com/cailloumajor/mongodb-influxdb/commit/9690d496b8996ce4fe2d8aadb588944e193a6a52))
+* **deps:** update rust crate clap to 4.4.1 ([845a4c2](https://github.com/cailloumajor/mongodb-influxdb/commit/845a4c219873870a1063176494b0b241bdfb303d))
+* **deps:** update rust crate clap to 4.4.2 ([14560d7](https://github.com/cailloumajor/mongodb-influxdb/commit/14560d761da0a4d7646e5707603da31af124e10e))
+* **deps:** update rust crate serde to 1.0.188 ([d043571](https://github.com/cailloumajor/mongodb-influxdb/commit/d04357147748c18c23d95563200485b53da4d783))
+* **deps:** update rust crate url to 2.4.1 ([a828322](https://github.com/cailloumajor/mongodb-influxdb/commit/a828322f101b999c03f5ac0631fc2a4bdb6eda8d))
+* replace lazy_static with std::sync::OnceLock ([baeeb87](https://github.com/cailloumajor/mongodb-influxdb/commit/baeeb878f284e30a1643566820f978edaa95b2da))
+
 ## [3.0.7](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.6...v3.0.7) (2023-08-25)
 
 
