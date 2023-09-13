@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.9](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.8...v3.0.9) (2023-09-13)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate clap to 4.4.3 ([202ba13](https://github.com/cailloumajor/mongodb-influxdb/commit/202ba13b2a1dccf4c9bd38ec0cd4787c5ca979e2))
+* implement roundtrip channel ([0193e7d](https://github.com/cailloumajor/mongodb-influxdb/commit/0193e7d7ccc6b8ce176865f0bed911fe4e9d1ae8))
+* remove nested `Arc`s ([73070ae](https://github.com/cailloumajor/mongodb-influxdb/commit/73070ae7eea0fe25333b80add008851638b74df0))
+* tolerate data point create error ([cab30b1](https://github.com/cailloumajor/mongodb-influxdb/commit/cab30b1d789b574654f0f72f54ffbc46c639810a))
+* use CancellationToken ([4020dc5](https://github.com/cailloumajor/mongodb-influxdb/commit/4020dc5f1ca5a2e43c92977fdec6364c1a75753c))
+
 ## [3.0.8](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.7...v3.0.8) (2023-09-02)
 
 
