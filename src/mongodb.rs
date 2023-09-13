@@ -1,4 +1,3 @@
-use std::sync::Arc;
 use std::time::{Duration, UNIX_EPOCH};
 
 use anyhow::Context as _;
@@ -45,6 +44,7 @@ pub(crate) struct DataDocument {
     updated_since: u64,
 }
 
+#[derive(Clone)]
 pub(crate) struct Collection(mongodb::Collection<DataDocument>);
 
 impl Collection {
@@ -65,7 +65,7 @@ impl Collection {
     }
 
     pub(crate) fn periodic_scrape(
-        self: Arc<Self>,
+        &self,
         period: Duration,
         data_points_tx: mpsc::Sender<Vec<DataPoint>>,
     ) -> (AbortHandle, JoinHandle<()>) {
@@ -85,13 +85,14 @@ impl Collection {
             "val": true,
         };
         let options = FindOptions::builder().projection(projection).build();
+        let cloned_self = self.clone();
 
         let task = tokio::spawn(
             async move {
                 info!(status = "started");
 
                 while interval_stream.next().await.is_some() {
-                    let cursor = match self.0.find(None, options.clone()).await {
+                    let cursor = match cloned_self.0.find(None, options.clone()).await {
                         Ok(cursor) => cursor,
                         Err(err) => {
                             error!(kind="find in collection", %err);
@@ -113,7 +114,7 @@ impl Collection {
                         }
                     };
 
-                    let measurement = self.0.namespace().to_string();
+                    let measurement = cloned_self.0.namespace().to_string();
                     let timestamp = UNIX_EPOCH
                         .elapsed()
                         .expect("system time is before Unix epoch")
@@ -142,14 +143,13 @@ impl Collection {
         (abort_handle, task)
     }
 
-    pub(crate) fn handle_health(
-        self: Arc<Self>,
-    ) -> (mpsc::Sender<HealthResponder>, JoinHandle<()>) {
+    pub(crate) fn handle_health(&self) -> (mpsc::Sender<HealthResponder>, JoinHandle<()>) {
         let (tx, mut rx) = mpsc::channel::<HealthResponder>(1);
         let options = EstimatedDocumentCountOptions::builder()
             .max_time(Duration::from_secs(2))
             .comment(bson!("healthcheck"))
             .build();
+        let cloned_self = self.clone();
 
         let task = tokio::spawn(
             async move {
@@ -157,7 +157,11 @@ impl Collection {
 
                 while let Some(outcome_tx) = rx.recv().await {
                     debug!(msg = "request received");
-                    let outcome = match self.0.estimated_document_count(options.clone()).await {
+                    let outcome = match cloned_self
+                        .0
+                        .estimated_document_count(options.clone())
+                        .await
+                    {
                         Ok(_) => true,
                         Err(err) => {
                             error!(kind = "estimated document count", %err);
