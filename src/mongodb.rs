@@ -2,7 +2,6 @@ use std::time::{Duration, UNIX_EPOCH};
 
 use anyhow::Context as _;
 use clap::Args;
-use futures_util::stream::{AbortHandle, Abortable};
 use futures_util::{future, StreamExt, TryStreamExt};
 use mongodb::bson::{bson, doc, Document};
 use mongodb::options::{ClientOptions, EstimatedDocumentCountOptions, FindOptions};
@@ -12,6 +11,7 @@ use tokio::sync::mpsc;
 use tokio::task::JoinHandle;
 use tokio::time::{self, MissedTickBehavior};
 use tokio_stream::wrappers::IntervalStream;
+use tokio_util::sync::CancellationToken;
 use tracing::{debug, error, info, info_span, instrument, warn, Instrument as _};
 
 use crate::channel::roundtrip_channel;
@@ -69,11 +69,13 @@ impl Collection {
         &self,
         period: Duration,
         data_points_tx: mpsc::Sender<Vec<DataPoint>>,
-    ) -> (AbortHandle, JoinHandle<()>) {
-        let (abort_handle, abort_registration) = AbortHandle::new_pair();
+        shutdown_token: CancellationToken,
+    ) -> JoinHandle<()> {
         let mut interval = time::interval(period);
         interval.set_missed_tick_behavior(MissedTickBehavior::Delay);
-        let mut interval_stream = Abortable::new(IntervalStream::new(interval), abort_registration);
+        let mut interval_stream = IntervalStream::new(interval)
+            .take_until(shutdown_token.cancelled_owned())
+            .boxed();
         let tick_interval = period.as_millis() as u64;
         let projection = doc! {
             "updatedSince": {
@@ -88,7 +90,7 @@ impl Collection {
         let options = FindOptions::builder().projection(projection).build();
         let cloned_self = self.clone();
 
-        let task = tokio::spawn(
+        tokio::spawn(
             async move {
                 info!(status = "started");
 
@@ -139,9 +141,7 @@ impl Collection {
                 info!(status = "terminating");
             }
             .instrument(info_span!("mongodb_periodic_scrape")),
-        );
-
-        (abort_handle, task)
+        )
     }
 
     pub(crate) fn handle_health(&self) -> (HealthChannel, JoinHandle<()>) {

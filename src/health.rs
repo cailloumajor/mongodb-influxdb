@@ -2,12 +2,13 @@ use std::path::Path;
 
 use anyhow::Context as _;
 use futures_util::future;
-use futures_util::stream::{AbortHandle, Abortable, FuturesUnordered};
+use futures_util::stream::FuturesUnordered;
 use futures_util::StreamExt;
 use tokio::io::AsyncWriteExt;
 use tokio::net::UnixListener;
 use tokio::task::JoinHandle;
 use tokio_stream::wrappers::UnixListenerStream;
+use tokio_util::sync::CancellationToken;
 use tracing::{debug, error, info, info_span, Instrument};
 
 use crate::channel::RoundtripSender;
@@ -17,21 +18,23 @@ pub(crate) type HealthChannel = RoundtripSender<(), bool>;
 pub(crate) fn listen(
     socket_path: impl AsRef<Path>,
     health_channels: Vec<(&'static str, HealthChannel)>,
-) -> anyhow::Result<(AbortHandle, JoinHandle<()>)> {
-    let (abort_handle, abort_registration) = AbortHandle::new_pair();
+    shutdown_token: CancellationToken,
+) -> anyhow::Result<JoinHandle<()>> {
     let listener = UnixListener::bind(socket_path).context("error binding socket")?;
-    let unix_streams = UnixListenerStream::new(listener).filter_map(|item| {
-        future::ready(match item {
-            Ok(unix_stream) => Some(unix_stream),
-            Err(err) => {
-                error!(during = "unix listener accept", %err);
-                None
-            }
+    let mut unix_streams = UnixListenerStream::new(listener)
+        .filter_map(|item| {
+            future::ready(match item {
+                Ok(unix_stream) => Some(unix_stream),
+                Err(err) => {
+                    error!(during = "unix listener accept", %err);
+                    None
+                }
+            })
         })
-    });
-    let mut unix_streams = Abortable::new(unix_streams, abort_registration);
+        .take_until(shutdown_token.cancelled_owned())
+        .boxed();
 
-    let task = tokio::spawn(
+    Ok(tokio::spawn(
         async move {
             info!(msg = "listening");
 
@@ -80,9 +83,7 @@ pub(crate) fn listen(
             info!(msg = "terminating");
         }
         .instrument(info_span!("health_listen")),
-    );
-
-    Ok((abort_handle, task))
+    ))
 }
 
 #[cfg(test)]
@@ -121,7 +122,7 @@ mod tests {
         async fn bind_error() {
             let socket_path: String = ['\0'; 150].iter().collect();
 
-            assert!(listen(socket_path, vec![]).is_err());
+            assert!(listen(socket_path, vec![], CancellationToken::new()).is_err());
         }
 
         #[tokio::test]
@@ -131,7 +132,7 @@ mod tests {
                 ("second", health_task(Ok(false))),
                 ("third", health_task(Err(()))),
             ];
-            listen("\0unhealthy_test", senders).unwrap();
+            listen("\0unhealthy_test", senders, CancellationToken::new()).unwrap();
             let mut unix_stream = UnixStream::connect("\0unhealthy_test").await.unwrap();
             let mut health_status = String::new();
             unix_stream
@@ -148,7 +149,7 @@ mod tests {
                 ("first", health_task(Ok(true))),
                 ("second", health_task(Ok(true))),
             ];
-            listen("\0healthy_test", senders).unwrap();
+            listen("\0healthy_test", senders, CancellationToken::new()).unwrap();
             let mut unix_stream = UnixStream::connect("\0healthy_test").await.unwrap();
             let mut health_status = String::new();
             unix_stream
