@@ -16,7 +16,7 @@ use tracing::{debug, error, info, info_span, instrument, warn, Instrument as _};
 
 use crate::channel::roundtrip_channel;
 use crate::health::HealthChannel;
-use crate::line_protocol::{DataPoint, DataPointCreateError};
+use crate::line_protocol::DataPoint;
 
 const APP_NAME: &str = concat!(env!("CARGO_PKG_NAME"), " (", env!("CARGO_PKG_VERSION"), ")");
 
@@ -122,17 +122,10 @@ impl Collection {
                         .elapsed()
                         .expect("system time is before Unix epoch")
                         .as_secs();
-                    let data_points: Vec<_> = match docs
+                    let data_points: Vec<_> = docs
                         .into_iter()
                         .map(|doc| DataPoint::create(doc, measurement.clone(), timestamp))
-                        .collect()
-                    {
-                        Ok(vec) => vec,
-                        Err(DataPointCreateError { doc_id, field, msg }) => {
-                            error!(during = "DataPoint::new", doc_id, field, msg);
-                            continue;
-                        }
-                    };
+                        .collect();
                     if let Err(err) = data_points_tx.try_send(data_points) {
                         error!(during="sending data points", %err);
                     }

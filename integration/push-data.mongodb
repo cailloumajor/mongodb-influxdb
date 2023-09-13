@@ -16,6 +16,7 @@ function updateDocument(id) {
             $set: {
                 "val.integer": Math.floor(Math.random() * 100 + 200),
                 "val.float": Math.random() * 15 + 10,
+                "val.null": null,
             }
         },
         {

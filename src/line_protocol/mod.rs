@@ -3,7 +3,7 @@ use aho_corasick::AhoCorasick;
 mod data_point;
 mod field_value;
 
-pub(crate) use data_point::{DataPoint, DataPointCreateError};
+pub(crate) use data_point::DataPoint;
 
 struct Replacer {
     aho_corasick: AhoCorasick,

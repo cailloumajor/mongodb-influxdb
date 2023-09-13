@@ -48,7 +48,6 @@ docker compose build
 # Start services
 docker compose up -d --quiet-pull
 
-
 # Wait for mongodb-influxdb to be healthy
 max_attempts=6
 wait_success=
