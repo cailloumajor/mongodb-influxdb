@@ -2,6 +2,8 @@ use std::collections::BTreeMap;
 use std::fmt;
 use std::sync::OnceLock;
 
+use tracing::{error, info_span};
+
 use crate::mongodb::DataDocument;
 
 use super::field_value::FieldValue;
@@ -9,13 +11,6 @@ use super::Replacer;
 
 static MEASUREMENT_REPLACER: OnceLock<Replacer> = OnceLock::new();
 static TAG_KV_FIELD_K_REPLACER: OnceLock<Replacer> = OnceLock::new();
-
-#[derive(Debug)]
-pub(crate) struct DataPointCreateError {
-    pub doc_id: String,
-    pub field: String,
-    pub msg: &'static str,
-}
 
 pub(crate) struct DataPoint {
     measurement: String,
@@ -30,25 +25,34 @@ impl DataPoint {
         data_doc: DataDocument,
         measurement: String,
         timestamp: u64, // in seconds
-    ) -> Result<Self, DataPointCreateError> {
+    ) -> Self {
+        let _entered = info_span!("data_point_create").entered();
+
         let mut fields: BTreeMap<String, FieldValue> = BTreeMap::new();
         for (key, value) in data_doc.val {
-            let field_value = value.try_into().map_err(|msg| DataPointCreateError {
-                doc_id: data_doc.id.clone(),
-                field: key.clone(),
-                msg,
-            })?;
-            fields.insert(key, field_value);
+            match value.try_into() {
+                Ok(field_value) => {
+                    fields.insert(key, field_value);
+                }
+                Err(err) => {
+                    error!(
+                        during = "DataPoint creation",
+                        doc_id = data_doc.id,
+                        field = key,
+                        err
+                    );
+                }
+            }
         }
 
         let tags = [("id".into(), data_doc.id)].into();
 
-        Ok(Self {
+        Self {
             measurement,
             tags,
             fields,
             timestamp,
-        })
+        }
     }
 }
 
@@ -117,7 +121,7 @@ mod tests {
         let data_document: DataDocument = bson::from_document(document).unwrap();
         let measurement = String::from("some_measurement");
 
-        let data_point = DataPoint::create(data_document, measurement, now_secs as u64).unwrap();
+        let data_point = DataPoint::create(data_document, measurement, now_secs as u64);
 
         assert_eq!(data_point.measurement, "some_measurement");
         assert_eq!(data_point.tags["id"], "anid");

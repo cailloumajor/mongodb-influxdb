@@ -10,7 +10,8 @@ use tokio::task::{spawn_blocking, JoinHandle};
 use tracing::{debug, error, info, info_span, instrument, Instrument};
 use url::Url;
 
-use crate::health::HealthResponder;
+use crate::channel::roundtrip_channel;
+use crate::health::HealthChannel;
 use crate::line_protocol::DataPoint;
 
 #[derive(Args)]
@@ -137,19 +138,19 @@ impl Client {
         (tx, task)
     }
 
-    pub(crate) fn handle_health(&self) -> (mpsc::Sender<HealthResponder>, JoinHandle<()>) {
-        let (tx, mut rx) = mpsc::channel::<HealthResponder>(1);
+    pub(crate) fn handle_health(&self) -> (HealthChannel, JoinHandle<()>) {
+        let (tx, mut rx) = roundtrip_channel(1);
         let cloned_self = self.clone();
 
         let task = tokio::spawn(
             async move {
                 info!(status = "started");
 
-                while let Some(outcome_tx) = rx.recv().await {
+                while let Some((_, reply_tx)) = rx.recv().await {
                     debug!(msg = "request received");
                     let outcome = cloned_self.write(String::new()).await.is_ok();
-                    if outcome_tx.send(outcome).is_err() {
-                        error!(kind = "outcome channel sending");
+                    if reply_tx.send(outcome).is_err() {
+                        error!(kind = "reply channel sending");
                     }
                 }
 

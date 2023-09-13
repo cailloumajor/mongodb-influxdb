@@ -2,68 +2,61 @@ use std::path::Path;
 
 use anyhow::Context as _;
 use futures_util::future;
-use futures_util::stream::{AbortHandle, Abortable, FuturesUnordered};
+use futures_util::stream::FuturesUnordered;
 use futures_util::StreamExt;
 use tokio::io::AsyncWriteExt;
 use tokio::net::UnixListener;
-use tokio::sync::{mpsc, oneshot};
 use tokio::task::JoinHandle;
 use tokio_stream::wrappers::UnixListenerStream;
-use tracing::{debug, error, info, info_span, instrument, Instrument};
+use tokio_util::sync::CancellationToken;
+use tracing::{debug, error, info, info_span, Instrument};
 
-pub(crate) type HealthResponder = oneshot::Sender<bool>;
+use crate::channel::RoundtripSender;
 
-#[instrument(skip_all)]
-async fn health_roundtrip(
-    subsystem: &str,
-    health_tx: &mpsc::Sender<HealthResponder>,
-) -> Result<(), String> {
-    let (tx, rx) = oneshot::channel();
-
-    health_tx.try_send(tx).map_err(|err| {
-        error!(during = "sending health request", subsystem, %err);
-        format!("error sending health request to `{subsystem}` component")
-    })?;
-
-    let success = rx.await.map_err(|err| {
-        error!(kind = "outcome channel receiving", subsystem, %err);
-        format!("error receiving health outcome from `{subsystem}` component")
-    })?;
-
-    if success {
-        Ok(())
-    } else {
-        Err(format!("component `{subsystem}` is unhealthy"))
-    }
-}
+pub(crate) type HealthChannel = RoundtripSender<(), bool>;
 
 pub(crate) fn listen(
     socket_path: impl AsRef<Path>,
-    health_senders: Vec<(&'static str, mpsc::Sender<HealthResponder>)>,
-) -> anyhow::Result<(AbortHandle, JoinHandle<()>)> {
-    let (abort_handle, abort_registration) = AbortHandle::new_pair();
+    health_channels: Vec<(&'static str, HealthChannel)>,
+    shutdown_token: CancellationToken,
+) -> anyhow::Result<JoinHandle<()>> {
     let listener = UnixListener::bind(socket_path).context("error binding socket")?;
-    let unix_streams = UnixListenerStream::new(listener).filter_map(|item| {
-        future::ready(match item {
-            Ok(unix_stream) => Some(unix_stream),
-            Err(err) => {
-                error!(during = "unix listener accept", %err);
-                None
-            }
+    let mut unix_streams = UnixListenerStream::new(listener)
+        .filter_map(|item| {
+            future::ready(match item {
+                Ok(unix_stream) => Some(unix_stream),
+                Err(err) => {
+                    error!(during = "unix listener accept", %err);
+                    None
+                }
+            })
         })
-    });
-    let mut unix_streams = Abortable::new(unix_streams, abort_registration);
+        .take_until(shutdown_token.cancelled_owned())
+        .boxed();
 
-    let task = tokio::spawn(
+    Ok(tokio::spawn(
         async move {
             info!(msg = "listening");
 
             while let Some(mut stream) = unix_streams.next().await {
                 debug!(msg = "got connection");
 
-                let errors = health_senders
+                let errors = health_channels
                     .iter()
-                    .map(|(subsystem, health_tx)| health_roundtrip(subsystem, health_tx))
+                    .map(|(subsystem, health_channel)| async move {
+                        health_channel
+                            .roundtrip(())
+                            .await
+                            .map_err(|err| {
+                                error!(during = "health channel roundtrip", subsystem, %err);
+                                format!("component `{subsystem}`: health channel roundtrip error")
+                            })
+                            .and_then(|healthy| {
+                                healthy
+                                    .then_some(healthy)
+                                    .ok_or(format!("component `{subsystem}` is unhealthy"))
+                            })
+                    })
                     .collect::<FuturesUnordered<_>>()
                     .filter_map(|result| {
                         future::ready(match result {
@@ -90,65 +83,36 @@ pub(crate) fn listen(
             info!(msg = "terminating");
         }
         .instrument(info_span!("health_listen")),
-    );
-
-    Ok((abort_handle, task))
+    ))
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    mod health_roundtrip {
-        use super::*;
-
-        #[tokio::test]
-        async fn request_sending_error() {
-            let (tx, _) = mpsc::channel(1);
-            assert!(health_roundtrip("test", &tx).await.is_err());
-        }
-
-        #[tokio::test]
-        async fn outcome_channel_receiving_error() {
-            let (tx, mut rx) = mpsc::channel(1);
-            tokio::spawn(async move {
-                let _ = rx.recv().await.unwrap();
-            });
-            assert!(health_roundtrip("test", &tx).await.is_err());
-        }
-
-        #[tokio::test]
-        async fn unhealthy_subsystem() {
-            let (tx, mut rx) = mpsc::channel::<HealthResponder>(1);
-            tokio::spawn(async move {
-                let outcome_tx = rx.recv().await.unwrap();
-                outcome_tx.send(false).unwrap();
-            });
-            assert!(health_roundtrip("test", &tx).await.is_err());
-        }
-
-        #[tokio::test]
-        async fn success() {
-            let (tx, mut rx) = mpsc::channel::<HealthResponder>(1);
-            tokio::spawn(async move {
-                let outcome_tx = rx.recv().await.unwrap();
-                outcome_tx.send(true).unwrap();
-            });
-            assert!(health_roundtrip("test", &tx).await.is_ok());
-        }
-    }
-
     mod listen {
         use tokio::io::AsyncReadExt;
         use tokio::net::UnixStream;
+        use tokio::sync::oneshot;
+
+        use crate::channel::roundtrip_channel;
 
         use super::*;
 
-        fn health_task(outcome: bool) -> mpsc::Sender<HealthResponder> {
-            let (tx, mut rx) = mpsc::channel::<HealthResponder>(1);
+        fn health_task(outcome: Result<bool, ()>) -> HealthChannel {
+            let (tx, mut rx) = roundtrip_channel(1);
+            let cloned_tx = tx.clone();
             tokio::spawn(async move {
-                while let Some(outcome_tx) = rx.recv().await {
-                    outcome_tx.send(outcome).unwrap();
+                let outcome = match outcome {
+                    Ok(healthy) => healthy,
+                    Err(_) => {
+                        let (reply_tx, _) = oneshot::channel();
+                        cloned_tx.send((), reply_tx).await;
+                        return;
+                    }
+                };
+                while let Some((_, reply_tx)) = rx.recv().await {
+                    reply_tx.send(outcome).unwrap();
                 }
             });
             tx
@@ -156,23 +120,19 @@ mod tests {
 
         #[tokio::test]
         async fn bind_error() {
-            let mut socket_path = String::new();
-            for _ in 0..150 {
-                socket_path.push('\0');
-            }
-            let senders = Vec::new();
+            let socket_path: String = ['\0'; 150].iter().collect();
 
-            assert!(listen(socket_path, senders).is_err());
+            assert!(listen(socket_path, vec![], CancellationToken::new()).is_err());
         }
 
         #[tokio::test]
         async fn unhealthy() {
             let senders = vec![
-                ("first", health_task(true)),
-                ("second", health_task(false)),
-                ("third", health_task(false)),
+                ("first", health_task(Ok(true))),
+                ("second", health_task(Ok(false))),
+                ("third", health_task(Err(()))),
             ];
-            listen("\0unhealthy_test", senders).unwrap();
+            listen("\0unhealthy_test", senders, CancellationToken::new()).unwrap();
             let mut unix_stream = UnixStream::connect("\0unhealthy_test").await.unwrap();
             let mut health_status = String::new();
             unix_stream
@@ -180,13 +140,16 @@ mod tests {
                 .await
                 .unwrap();
             assert!(health_status.contains("component `second` is unhealthy"));
-            assert!(health_status.contains("component `third` is unhealthy"));
+            assert!(health_status.contains("component `third`: health channel roundtrip error"));
         }
 
         #[tokio::test]
         async fn healthy() {
-            let senders = vec![("first", health_task(true)), ("second", health_task(true))];
-            listen("\0healthy_test", senders).unwrap();
+            let senders = vec![
+                ("first", health_task(Ok(true))),
+                ("second", health_task(Ok(true))),
+            ];
+            listen("\0healthy_test", senders, CancellationToken::new()).unwrap();
             let mut unix_stream = UnixStream::connect("\0healthy_test").await.unwrap();
             let mut health_status = String::new();
             unix_stream
