@@ -14,6 +14,7 @@ use tracing_log::LogTracer;
 
 use mongodb_influxdb::HEALTH_SOCKET_PATH;
 
+mod channel;
 mod health;
 mod influxdb;
 mod level_filter;

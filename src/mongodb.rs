@@ -14,7 +14,8 @@ use tokio::time::{self, MissedTickBehavior};
 use tokio_stream::wrappers::IntervalStream;
 use tracing::{debug, error, info, info_span, instrument, warn, Instrument as _};
 
-use crate::health::HealthResponder;
+use crate::channel::roundtrip_channel;
+use crate::health::HealthChannel;
 use crate::line_protocol::{DataPoint, DataPointCreateError};
 
 const APP_NAME: &str = concat!(env!("CARGO_PKG_NAME"), " (", env!("CARGO_PKG_VERSION"), ")");
@@ -143,8 +144,8 @@ impl Collection {
         (abort_handle, task)
     }
 
-    pub(crate) fn handle_health(&self) -> (mpsc::Sender<HealthResponder>, JoinHandle<()>) {
-        let (tx, mut rx) = mpsc::channel::<HealthResponder>(1);
+    pub(crate) fn handle_health(&self) -> (HealthChannel, JoinHandle<()>) {
+        let (tx, mut rx) = roundtrip_channel(1);
         let options = EstimatedDocumentCountOptions::builder()
             .max_time(Duration::from_secs(2))
             .comment(bson!("healthcheck"))
@@ -155,7 +156,7 @@ impl Collection {
             async move {
                 info!(status = "started");
 
-                while let Some(outcome_tx) = rx.recv().await {
+                while let Some((_, reply_tx)) = rx.recv().await {
                     debug!(msg = "request received");
                     let outcome = match cloned_self
                         .0
@@ -168,8 +169,8 @@ impl Collection {
                             false
                         }
                     };
-                    if outcome_tx.send(outcome).is_err() {
-                        error!(kind = "outcome channel sending");
+                    if reply_tx.send(outcome).is_err() {
+                        error!(kind = "reply channel sending");
                     }
                 }
 
