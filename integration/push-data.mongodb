@@ -1,7 +1,5 @@
 use("testdb");
 
-db.disableFreeMonitoring();
-
 function updateDocument(id) {
     const validityTime = new Date(Date.now() - 10_000);
 
