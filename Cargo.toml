@@ -35,7 +35,7 @@ default-features = false
 features = [ "json" ]
 
 [dependencies.tokio]
-version = "1.32.0"
+version = "1.33.0"
 features = [ "macros", "net", "rt-multi-thread", "sync", "time" ]
 
 [dependencies.tracing-log]
