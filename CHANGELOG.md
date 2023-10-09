@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.0.13](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.12...v3.0.13) (2023-10-09)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate reqwest to 0.11.21 ([cd31a8a](https://github.com/cailloumajor/mongodb-influxdb/commit/cd31a8a5cd120852c9e8f8f1c11ca48eecc40008))
+* **deps:** update rust crate reqwest to 0.11.22 ([4385503](https://github.com/cailloumajor/mongodb-influxdb/commit/4385503de4de1840cb1f6bb87ea57765f19ec991))
+* **deps:** update rust crate tokio to 1.33.0 ([2228e1d](https://github.com/cailloumajor/mongodb-influxdb/commit/2228e1d03488b0fc0d42d2f63b8490827c4a2ea7))
+* **deps:** update rust docker tag to v1.73.0 ([42566e5](https://github.com/cailloumajor/mongodb-influxdb/commit/42566e59e34e2157c3491d319df4ec445b943b54))
+
 ## [3.0.12](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.11...v3.0.12) (2023-10-02)
 
 
