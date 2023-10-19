@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.0.14](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.13...v3.0.14) (2023-10-19)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate aho-corasick to 1.1.2 ([4b75356](https://github.com/cailloumajor/mongodb-influxdb/commit/4b753568fd586a9086f24f43a26cdbef1f1a7162))
+* **deps:** update rust crate flate2 to 1.0.28 ([32bf0c2](https://github.com/cailloumajor/mongodb-influxdb/commit/32bf0c2a9940c5ae33beaed9d6a55aa4a8102881))
+* **deps:** update rust crate serde to 1.0.189 ([4cb5d86](https://github.com/cailloumajor/mongodb-influxdb/commit/4cb5d8699b959451cf6d881b6ca8180e7b0cb9c1))
+* **deps:** update rust crate tracing to 0.1.39 ([c0f4bc8](https://github.com/cailloumajor/mongodb-influxdb/commit/c0f4bc83acaf4b8462a0f81423dc290a9aa21cef))
+* **deps:** update rust crate tracing to 0.1.40 ([ea474e5](https://github.com/cailloumajor/mongodb-influxdb/commit/ea474e53995f4695f8e8c89b0dfd86522140fe2c))
+* **deps:** update tonistiigi/xx docker tag to v1.3.0 ([670632e](https://github.com/cailloumajor/mongodb-influxdb/commit/670632eaae6322bf8e7d092af04b472caa8be045))
+
 ## [3.0.13](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.12...v3.0.13) (2023-10-09)
 
 

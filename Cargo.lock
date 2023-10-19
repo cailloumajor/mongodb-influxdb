@@ -1031,7 +1031,7 @@ dependencies = [
 
 [[package]]
 name = "mongodb-influxdb"
-version = "3.0.13"
+version = "3.0.14"
 dependencies = [
  "aho-corasick",
  "anyhow",
