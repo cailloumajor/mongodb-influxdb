@@ -14,7 +14,7 @@ flate2 = "1.0.28"
 futures-util = "0.3.28"
 humantime = "2.1.0"
 itoa = "1.0.9"
-mongodb = "2.7.0"
+mongodb = "2.8.2"
 ryu = "1.0.15"
 serde = { version = "1.0.189", features = [ "derive" ] }
 signal-hook = { version = "0.3.17", default-features = false }
