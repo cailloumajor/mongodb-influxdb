@@ -57,9 +57,9 @@ Options:
       --influxdb-bucket <INFLUXDB_BUCKET>
           InfluxDB bucket to write to [env: INFLUXDB_BUCKET=]
   -v, --verbose...
-          More output per occurrence
+          Increase logging verbosity
   -q, --quiet...
-          Less output per occurrence
+          Decrease logging verbosity
   -h, --help
           Print help
 ```
