@@ -1,6 +1,6 @@
 use std::io::Write;
+use std::sync::Arc;
 
-use arcstr::ArcStr;
 use clap::Args;
 use flate2::write::GzEncoder;
 use reqwest::{header, Client as HttpClient};
@@ -42,18 +42,18 @@ struct WriteResponse {
 #[derive(Clone)]
 pub(crate) struct Client {
     url: Url,
-    bucket: ArcStr,
-    org: ArcStr,
-    auth_header: ArcStr,
+    bucket: Arc<str>,
+    org: Arc<str>,
+    auth_header: Arc<str>,
     http_client: HttpClient,
 }
 
 impl Client {
     pub(crate) fn new(config: &Config) -> Self {
         let url = config.influxdb_url.clone();
-        let bucket = ArcStr::from(&config.influxdb_bucket);
-        let org = ArcStr::from(&config.influxdb_org);
-        let auth_header = ArcStr::from(format!("Token {}", config.influxdb_api_token));
+        let bucket = Arc::from(config.influxdb_bucket.as_str());
+        let org = Arc::from(config.influxdb_org.as_str());
+        let auth_header = Arc::from(format!("Token {}", config.influxdb_api_token).as_str());
         let http_client = HttpClient::new();
 
         Self {
@@ -89,7 +89,7 @@ impl Client {
         let resp = self
             .http_client
             .post(url)
-            .header(header::AUTHORIZATION, self.auth_header.as_str())
+            .header(header::AUTHORIZATION, self.auth_header.as_ref())
             .header(header::CONTENT_ENCODING, "gzip")
             .header(header::CONTENT_TYPE, "text/plain; charset=utf-8")
             .body(body)
