@@ -1,5 +1,30 @@
 # Changelog
 
+## [3.0.15](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.14...v3.0.15) (2024-05-25)
+
+
+### Bug Fixes
+
+* **deps:** remove use of arcstr ([7aa8d9a](https://github.com/cailloumajor/mongodb-influxdb/commit/7aa8d9a972553732018ad15d4c554f4168502b10))
+* **deps:** update rust crate aho-corasick to v1.1.3 ([36712ea](https://github.com/cailloumajor/mongodb-influxdb/commit/36712ea639ed6b0dfc4830104a6106364b6b8b0a))
+* **deps:** update rust crate anyhow to v1.0.86 ([6f3b75c](https://github.com/cailloumajor/mongodb-influxdb/commit/6f3b75cbc8326051e7c23ecb249eca296c880e0e))
+* **deps:** update rust crate clap to v4.5.4 ([f1eec8a](https://github.com/cailloumajor/mongodb-influxdb/commit/f1eec8a322b4bff121a9bb8bc2e11df1894afb8a))
+* **deps:** update rust crate clap-verbosity-flag to v2.2.0 ([3ddfc94](https://github.com/cailloumajor/mongodb-influxdb/commit/3ddfc949fdf24a14f1051ea9f76d6ee3e28ffaa0))
+* **deps:** update rust crate flate2 to v1.0.30 ([4102e77](https://github.com/cailloumajor/mongodb-influxdb/commit/4102e77fad0d26d5a77c4413639dcb2908e1e9e5))
+* **deps:** update rust crate futures-util to v0.3.30 ([a48c204](https://github.com/cailloumajor/mongodb-influxdb/commit/a48c20498a6569558e3247ad7b813537438f9bfc))
+* **deps:** update rust crate itoa to v1.0.11 ([c024e7a](https://github.com/cailloumajor/mongodb-influxdb/commit/c024e7a94d0abd0bb6f0eb37bffb5b02dd02f02c))
+* **deps:** update rust crate mongodb to v2.8.2 ([4d30a48](https://github.com/cailloumajor/mongodb-influxdb/commit/4d30a486ebfd1208741e223dbf4d372d885983ad))
+* **deps:** update rust crate reqwest to 0.12.0 ([b323fbd](https://github.com/cailloumajor/mongodb-influxdb/commit/b323fbd2e8de96bd410bf0a65b201724af637250))
+* **deps:** update rust crate ryu to v1.0.18 ([d63948b](https://github.com/cailloumajor/mongodb-influxdb/commit/d63948becded52e4fd0d0815dd45e74a50f02613))
+* **deps:** update rust crate serde to v1.0.202 ([ce810c3](https://github.com/cailloumajor/mongodb-influxdb/commit/ce810c30bab128ab7a57cb401bdf1ed3cdc8b4fc))
+* **deps:** update rust crate tokio to v1.37.0 ([aaad2e0](https://github.com/cailloumajor/mongodb-influxdb/commit/aaad2e0e6b96b10392873ef547c34369e3c5c41a))
+* **deps:** update rust crate tokio-stream to v0.1.15 ([2e5879c](https://github.com/cailloumajor/mongodb-influxdb/commit/2e5879ce2e3d4d5e7524a095bad6678b71d2b6e6))
+* **deps:** update rust crate tokio-util to v0.7.11 ([be715c0](https://github.com/cailloumajor/mongodb-influxdb/commit/be715c01e654045d4cd5471ee21ff9bad27ef02e))
+* **deps:** update rust crate url to v2.5.0 ([84bbf6d](https://github.com/cailloumajor/mongodb-influxdb/commit/84bbf6d57e19dc1d997a9a52a53992cf09f3b43a))
+* **deps:** update rust docker tag to v1.78.0 ([356db9c](https://github.com/cailloumajor/mongodb-influxdb/commit/356db9c9717961bdd6aba2152733c091a572f0b1))
+* **deps:** update tokio-tracing monorepo ([6c41630](https://github.com/cailloumajor/mongodb-influxdb/commit/6c4163071bc4cecb26fbda4c71106f36007b207f))
+* **deps:** update tonistiigi/xx docker tag to v1.4.0 ([88ad088](https://github.com/cailloumajor/mongodb-influxdb/commit/88ad088e52c5476f910a5f7b4ce4b5546ffa805d))
+
 ## [3.0.14](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.13...v3.0.14) (2023-10-19)
 
 
