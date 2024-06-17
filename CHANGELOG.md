@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.0.16](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.15...v3.0.16) (2024-06-17)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate serde to v1.0.203 ([32701df](https://github.com/cailloumajor/mongodb-influxdb/commit/32701df496583675693242f4a75bc7b29e77134c))
+* **deps:** update rust crate tokio to v1.38.0 ([f7bad5a](https://github.com/cailloumajor/mongodb-influxdb/commit/f7bad5af55629034bad0dd3c34e33c52332e351b))
+
 ## [3.0.15](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.14...v3.0.15) (2024-05-25)
 
 
