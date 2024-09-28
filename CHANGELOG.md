@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.16](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.15...v3.0.16) (2024-09-28)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate serde to v1.0.203 ([32701df](https://github.com/cailloumajor/mongodb-influxdb/commit/32701df496583675693242f4a75bc7b29e77134c))
+* **deps:** update rust crate tokio to v1.38.0 ([f7bad5a](https://github.com/cailloumajor/mongodb-influxdb/commit/f7bad5af55629034bad0dd3c34e33c52332e351b))
+* **deps:** update Rust docker tag to bookworm ([40dacaa](https://github.com/cailloumajor/mongodb-influxdb/commit/40dacaa9b9aaf41872007ffe68a97e773784b7fe))
+* **deps:** update rust docker tag to v1.80.1 ([5fe6a54](https://github.com/cailloumajor/mongodb-influxdb/commit/5fe6a54e97536fcf5c3e069f164c928fddc8ee13))
+* **deps:** update time crate ([8593459](https://github.com/cailloumajor/mongodb-influxdb/commit/85934595ac3c237002ba478ec0ec993c241b3925))
+
 ## [3.0.15](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.14...v3.0.15) (2024-05-25)
 
 
