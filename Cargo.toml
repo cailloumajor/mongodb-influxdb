@@ -1,19 +1,19 @@
 [package]
 name = "mongodb-influxdb"
 version = "3.0.15"
-edition = "2021"
+edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 aho-corasick = "1.1"
 anyhow = "1.0"
-clap-verbosity-flag = "2.0"
-flate2 = "1.0"
+clap-verbosity-flag = { version = "3.0", features = [ "tracing" ] }
+flate2 = "1.1"
 futures-util = "0.3"
 humantime = "2.1"
 itoa = "1.0"
-mongodb = "2.7"
+mongodb = "3.2"
 ryu = "1.0"
 serde = { version = "1.0", features = [ "derive" ] }
 signal-hook = { version = "0.3", default-features = false }
@@ -21,10 +21,10 @@ signal-hook-tokio = { version = "0.3", features = [ "futures-v0_3" ] }
 tokio-stream = { version = "0.1", features = [ "net", "time" ] }
 tokio-util = "0.7"
 tracing = "0.1"
-url = "2.4"
+url = "2.5"
 
 [dependencies.clap]
-version = "4.4"
+version = "4.5"
 default-features = false
 features = [ "std", "help", "usage", "error-context", "derive", "env" ]
 
@@ -34,7 +34,7 @@ default-features = false
 features = [ "json" ]
 
 [dependencies.tokio]
-version = "1.33"
+version = "1.43"
 features = [ "macros", "net", "rt-multi-thread", "sync", "time" ]
 
 [dependencies.tracing-log]
@@ -48,4 +48,4 @@ default-features = false
 features = [ "ansi", "fmt", "parking_lot", "smallvec", "std" ]
 
 [dev-dependencies]
-mockito = "1.2"
+mockito = "1.7"

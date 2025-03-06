@@ -17,11 +17,8 @@ use mongodb_influxdb::HEALTH_SOCKET_PATH;
 mod channel;
 mod health;
 mod influxdb;
-mod level_filter;
 mod line_protocol;
 mod mongodb;
-
-use level_filter::VerbosityLevelFilter;
 
 #[derive(Parser)]
 struct Args {
@@ -54,7 +51,7 @@ async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
 
     tracing_subscriber::fmt()
-        .with_max_level(VerbosityLevelFilter::from(&args.verbose))
+        .with_max_level(args.verbose.tracing_level())
         .init();
 
     LogTracer::init_with_filter(args.verbose.log_level_filter())?;

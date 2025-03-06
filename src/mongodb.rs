@@ -2,17 +2,17 @@ use std::time::{Duration, UNIX_EPOCH};
 
 use anyhow::Context as _;
 use clap::Args;
-use futures_util::{future, StreamExt, TryStreamExt};
-use mongodb::bson::{bson, doc, Document};
-use mongodb::options::{ClientOptions, EstimatedDocumentCountOptions, FindOptions};
+use futures_util::{StreamExt, TryStreamExt, future};
 use mongodb::Client;
+use mongodb::bson::{Document, bson, doc};
+use mongodb::options::{ClientOptions, EstimatedDocumentCountOptions, FindOptions};
 use serde::Deserialize;
 use tokio::sync::mpsc;
 use tokio::task::JoinHandle;
 use tokio::time::{self, MissedTickBehavior};
 use tokio_stream::wrappers::IntervalStream;
 use tokio_util::sync::CancellationToken;
-use tracing::{debug, error, info, info_span, instrument, warn, Instrument as _};
+use tracing::{Instrument as _, debug, error, info, info_span, instrument, warn};
 
 use crate::channel::roundtrip_channel;
 use crate::health::HealthChannel;
@@ -95,7 +95,12 @@ impl Collection {
                 info!(status = "started");
 
                 while interval_stream.next().await.is_some() {
-                    let cursor = match cloned_self.0.find(None, options.clone()).await {
+                    let cursor = match cloned_self
+                        .0
+                        .find(doc! {})
+                        .with_options(options.clone())
+                        .await
+                    {
                         Ok(cursor) => cursor,
                         Err(err) => {
                             error!(kind="find in collection", %err);
@@ -153,7 +158,8 @@ impl Collection {
                     debug!(msg = "request received");
                     let outcome = match cloned_self
                         .0
-                        .estimated_document_count(options.clone())
+                        .estimated_document_count()
+                        .with_options(options.clone())
                         .await
                     {
                         Ok(_) => true,
