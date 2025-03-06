@@ -3,11 +3,11 @@ use std::sync::Arc;
 
 use clap::Args;
 use flate2::write::GzEncoder;
-use reqwest::{header, Client as HttpClient};
+use reqwest::{Client as HttpClient, header};
 use serde::Deserialize;
 use tokio::sync::mpsc;
-use tokio::task::{spawn_blocking, JoinHandle};
-use tracing::{debug, error, info, info_span, instrument, Instrument};
+use tokio::task::{JoinHandle, spawn_blocking};
+use tracing::{Instrument, debug, error, info, info_span, instrument};
 use url::Url;
 
 use crate::channel::roundtrip_channel;

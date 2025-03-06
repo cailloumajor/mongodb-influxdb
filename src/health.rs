@@ -1,15 +1,15 @@
 use std::path::Path;
 
 use anyhow::Context as _;
+use futures_util::StreamExt;
 use futures_util::future;
 use futures_util::stream::FuturesUnordered;
-use futures_util::StreamExt;
 use tokio::io::AsyncWriteExt;
 use tokio::net::UnixListener;
 use tokio::task::JoinHandle;
 use tokio_stream::wrappers::UnixListenerStream;
 use tokio_util::sync::CancellationToken;
-use tracing::{debug, error, info, info_span, Instrument};
+use tracing::{Instrument, debug, error, info, info_span};
 
 use crate::channel::RoundtripSender;
 

@@ -6,8 +6,8 @@ use tracing::{error, info_span};
 
 use crate::mongodb::DataDocument;
 
-use super::field_value::FieldValue;
 use super::Replacer;
+use super::field_value::FieldValue;
 
 static MEASUREMENT_REPLACER: OnceLock<Replacer> = OnceLock::new();
 static TAG_KV_FIELD_K_REPLACER: OnceLock<Replacer> = OnceLock::new();
@@ -99,7 +99,7 @@ impl fmt::Display for DataPoint {
 
 #[cfg(test)]
 mod tests {
-    use mongodb::bson::{self, doc, DateTime};
+    use mongodb::bson::{self, DateTime, doc};
 
     use crate::mongodb::DataDocument;
 
