@@ -70,9 +70,20 @@ docker compose exec mongodb mongosh --quiet --norc /usr/src/push-data.mongodb
 awk '/\/\/ Tests start below/ {exit} {print}' query.flux \
 | docker compose exec -T influxdb influx query --raw -
 
-# Run the tests with influxdb CLI
-docker compose exec -T influxdb influx query - < query.flux \
-|| die "Failure running Flux tests"
+# Run the tests with influxdb CLI (retrying if they fail)
+max_attempts=3
+wait_success=
+for i in $(seq 1 $max_attempts); do
+    if docker compose exec -T influxdb influx query - < query.flux; then
+        wait_success="true"
+        break
+    fi
+    echo "InfluxDB tests: try #$i failed" >&2
+    [[ $i != "$max_attempts" ]] && sleep 3
+done
+if [ "$wait_success" != "true" ]; then
+    die "Failure running Flux tests"
+fi
 
 echo "🎉 success"
 teardown
