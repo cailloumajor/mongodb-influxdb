@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.17](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.16...v3.0.17) (2025-03-27)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate clap to v4.5.34 ([b95d5c7](https://github.com/cailloumajor/mongodb-influxdb/commit/b95d5c7e5e57acfbe4f32bbd142934d2144a6300))
+
 ## [3.0.16](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.15...v3.0.16) (2025-03-24)
 
 
