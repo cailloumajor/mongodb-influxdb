@@ -43,27 +43,20 @@ pub(crate) fn listen(
 
                 let errors = health_channels
                     .iter()
-                    .map(|(subsystem, health_channel)| async move {
-                        health_channel
-                            .roundtrip(())
-                            .await
-                            .map_err(|err| {
+                    .map(async |(subsystem, health_channel)| {
+                        match health_channel.roundtrip(()).await {
+                            Ok(true) => None,
+                            Ok(false) => Some(format!("component `{subsystem}` is unhealthy")),
+                            Err(err) => {
                                 error!(during = "health channel roundtrip", subsystem, %err);
-                                format!("component `{subsystem}`: health channel roundtrip error")
-                            })
-                            .and_then(|healthy| {
-                                healthy
-                                    .then_some(healthy)
-                                    .ok_or(format!("component `{subsystem}` is unhealthy"))
-                            })
+                                Some(format!(
+                                    "component `{subsystem}`: health channel roundtrip error"
+                                ))
+                            }
+                        }
                     })
                     .collect::<FuturesUnordered<_>>()
-                    .filter_map(|result| {
-                        future::ready(match result {
-                            Ok(_) => None,
-                            Err(err) => Some(err),
-                        })
-                    })
+                    .filter_map(future::ready)
                     .collect::<Vec<_>>()
                     .await;
                 let message = if errors.is_empty() {
