@@ -1,5 +1,25 @@
 # Changelog
 
+## [3.0.17](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.16...v3.0.17) (2025-05-24)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate anyhow to v1.0.98 ([9eafe15](https://github.com/cailloumajor/mongodb-influxdb/commit/9eafe1507b2f8440199ecd9555d82cd4315ba127))
+* **deps:** update rust crate clap to v4.5.34 ([b95d5c7](https://github.com/cailloumajor/mongodb-influxdb/commit/b95d5c7e5e57acfbe4f32bbd142934d2144a6300))
+* **deps:** update rust crate clap to v4.5.35 ([363936c](https://github.com/cailloumajor/mongodb-influxdb/commit/363936cbbe33574053478074d8e1b95a5a2d69d9))
+* **deps:** update rust crate clap to v4.5.36 ([99a9ddd](https://github.com/cailloumajor/mongodb-influxdb/commit/99a9ddd563b96443bc191c4e3a7a9cb414795d42))
+* **deps:** update rust crate clap to v4.5.37 ([90b5da4](https://github.com/cailloumajor/mongodb-influxdb/commit/90b5da413250d659a36a2f58190a701c95b694ca))
+* **deps:** update rust crate clap to v4.5.38 ([37564a4](https://github.com/cailloumajor/mongodb-influxdb/commit/37564a4add222474d46576f39b8ee911f01cc647))
+* **deps:** update rust crate clap-verbosity-flag to v3.0.3 ([7d67baf](https://github.com/cailloumajor/mongodb-influxdb/commit/7d67baf69ba0fc222d5db9c4f4b3bf83cf8051ad))
+* **deps:** update rust crate flate2 to v1.1.1 ([970bb97](https://github.com/cailloumajor/mongodb-influxdb/commit/970bb9771cc09653c96f134046332e047e2e320d))
+* **deps:** update rust crate signal-hook to v0.3.18 ([7a6cc65](https://github.com/cailloumajor/mongodb-influxdb/commit/7a6cc653d6c4d0627a8550e8e8e90738bd58862b))
+* **deps:** update rust crate tokio to v1.44.2 ([005bdc4](https://github.com/cailloumajor/mongodb-influxdb/commit/005bdc4526acf254e2a4bee00c043e6fd2fb0ff9))
+* **deps:** update rust crate tokio to v1.45.0 ([#289](https://github.com/cailloumajor/mongodb-influxdb/issues/289)) ([c622945](https://github.com/cailloumajor/mongodb-influxdb/commit/c6229452e5eb2aee1e0c2e3195aeb37ac1365548))
+* **deps:** update rust crate tokio to v1.45.1 ([3fc4b64](https://github.com/cailloumajor/mongodb-influxdb/commit/3fc4b64245577cc40cdd011cf1caee928212b576))
+* **deps:** update rust crate tokio-util to v0.7.15 ([54bc88b](https://github.com/cailloumajor/mongodb-influxdb/commit/54bc88b33093fe56bd80c8bd54d2695c155b5da9))
+* **deps:** update rust docker tag to v1.87.0 ([#288](https://github.com/cailloumajor/mongodb-influxdb/issues/288)) ([8a7bb05](https://github.com/cailloumajor/mongodb-influxdb/commit/8a7bb058882d3c5ba3358d9b5bcf5f24226bbc71))
+
 ## [3.0.16](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.15...v3.0.16) (2025-03-24)
 
 
