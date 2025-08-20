@@ -35,7 +35,7 @@ sequenceDiagram
 
 ## Usage
 
-```ShellSession
+```console
 $ mongodb-influxdb --help
 Usage: mongodb-influxdb [OPTIONS] --mongodb-database <MONGODB_DATABASE> --mongodb-collection <MONGODB_COLLECTION> --influxdb-api-token <INFLUXDB_API_TOKEN> --influxdb-org <INFLUXDB_ORG> --influxdb-bucket <INFLUXDB_BUCKET>
 
@@ -62,4 +62,5 @@ Options:
           Decrease logging verbosity
   -h, --help
           Print help
+
 ```
