@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.0.18](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.17...v3.0.18) (2025-08-25)
+
+
+### Bug Fixes
+
+* **deps:** update rust crate clap-verbosity-flag to v3.0.4 ([d87f257](https://github.com/cailloumajor/mongodb-influxdb/commit/d87f2577dd0fbef8901a0272992798ff4e60d468))
+* **deps:** update rust crate mongodb to v3.2.5 ([5802f1e](https://github.com/cailloumajor/mongodb-influxdb/commit/5802f1ea96832036635d1816519736ac9ffed152))
+* **deps:** update rust crate url to v2.5.6 ([a6b65eb](https://github.com/cailloumajor/mongodb-influxdb/commit/a6b65eb86975bd9d9ecb75a74a31c3e53faef654))
+* **deps:** update rust crate url to v2.5.7 ([e46c9cc](https://github.com/cailloumajor/mongodb-influxdb/commit/e46c9cc2c4c8532a8302b803c1d27b1c464f6fe0))
+
 ## [3.0.17](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.16...v3.0.17) (2025-08-14)
 
 
