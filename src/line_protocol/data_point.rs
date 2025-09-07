@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 use std::fmt;
-use std::sync::OnceLock;
+use std::sync::LazyLock;
 
 use tracing::{error, info_span};
 
@@ -9,8 +9,10 @@ use crate::mongodb::DataDocument;
 use super::Replacer;
 use super::field_value::FieldValue;
 
-static MEASUREMENT_REPLACER: OnceLock<Replacer> = OnceLock::new();
-static TAG_KV_FIELD_K_REPLACER: OnceLock<Replacer> = OnceLock::new();
+static MEASUREMENT_REPLACER: LazyLock<Replacer> =
+    LazyLock::new(|| Replacer::new(&[",", " "], &[r"\,", r"\ "]));
+static TAG_KV_FIELD_K_REPLACER: LazyLock<Replacer> =
+    LazyLock::new(|| Replacer::new(&[",", "=", " "], &[r"\,", r"\=", r"\ "]));
 
 pub(crate) struct DataPoint {
     measurement: String,
@@ -58,19 +60,15 @@ impl DataPoint {
 
 impl fmt::Display for DataPoint {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let measurement_replacer =
-            MEASUREMENT_REPLACER.get_or_init(|| Replacer::new(&[",", " "], &[r"\,", r"\ "]));
-        let tag_field_replacer = TAG_KV_FIELD_K_REPLACER
-            .get_or_init(|| Replacer::new(&[",", "=", " "], &[r"\,", r"\=", r"\ "]));
-        let escaped_measurement = measurement_replacer.replace_all(&self.measurement);
+        let escaped_measurement = MEASUREMENT_REPLACER.replace_all(&self.measurement);
         f.write_str(&escaped_measurement)?;
 
         for (key, value) in &self.tags {
             f.write_str(",")?;
-            let escaped_key = tag_field_replacer.replace_all(key);
+            let escaped_key = TAG_KV_FIELD_K_REPLACER.replace_all(key);
             f.write_str(&escaped_key)?;
             f.write_str("=")?;
-            let escaped_value = tag_field_replacer.replace_all(value);
+            let escaped_value = TAG_KV_FIELD_K_REPLACER.replace_all(value);
             f.write_str(&escaped_value)?;
         }
 
@@ -78,7 +76,7 @@ impl fmt::Display for DataPoint {
 
         let mut fields = self.fields.iter().peekable();
         while let Some((key, value)) = fields.next() {
-            let escaped_key = tag_field_replacer.replace_all(key);
+            let escaped_key = TAG_KV_FIELD_K_REPLACER.replace_all(key);
             f.write_str(&escaped_key)?;
             f.write_str("=")?;
             fmt::Display::fmt(value, f)?;
