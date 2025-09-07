@@ -118,7 +118,7 @@ mod tests {
                 "fourth": 42,
             },
         };
-        let data_document: DataDocument = bson::from_document(document).unwrap();
+        let data_document: DataDocument = bson::deserialize_from_document(document).unwrap();
         let measurement = String::from("some_measurement");
 
         let data_point = DataPoint::create(data_document, measurement, now_secs as u64);
