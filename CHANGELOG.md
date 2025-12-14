@@ -1,5 +1,36 @@
 # Changelog
 
+## [3.0.18](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.17...v3.0.18) (2025-12-14)
+
+
+### Bug Fixes
+
+* **deps:** remove useless bson v2 indirect dependency ([ac1cf92](https://github.com/cailloumajor/mongodb-influxdb/commit/ac1cf92f0b343078f27b46ecaa939be746a2ca50))
+* **deps:** switch to bson v3 ([579c6b3](https://github.com/cailloumajor/mongodb-influxdb/commit/579c6b356c3c107d9ebb8f0a2d5fcf8179877598))
+* **deps:** update base image to trixie ([38cd625](https://github.com/cailloumajor/mongodb-influxdb/commit/38cd62591a61d151aaad88e573ca900c1bc2253c))
+* **deps:** update rust crate anyhow to v1.0.100 ([19a48f5](https://github.com/cailloumajor/mongodb-influxdb/commit/19a48f5095018108be7e4a44ce547836fa574bc3))
+* **deps:** update rust crate clap to v4.5.46 ([40b63cf](https://github.com/cailloumajor/mongodb-influxdb/commit/40b63cf418196a27a34e6814eb70da7d6e95fb50))
+* **deps:** update rust crate clap to v4.5.47 ([598688b](https://github.com/cailloumajor/mongodb-influxdb/commit/598688bf2816150cad841817e02426d9d0987f56))
+* **deps:** update rust crate clap to v4.5.48 ([ba37809](https://github.com/cailloumajor/mongodb-influxdb/commit/ba37809ee130d9539ab5b54c0bdd6b3f0f0d923c))
+* **deps:** update rust crate clap-verbosity-flag to v3.0.4 ([d87f257](https://github.com/cailloumajor/mongodb-influxdb/commit/d87f2577dd0fbef8901a0272992798ff4e60d468))
+* **deps:** update rust crate humantime to v2.3.0 ([aadc115](https://github.com/cailloumajor/mongodb-influxdb/commit/aadc1159af5c46ae2e8333657b5ac5b585d039a2))
+* **deps:** update rust crate mongodb to v3.2.5 ([5802f1e](https://github.com/cailloumajor/mongodb-influxdb/commit/5802f1ea96832036635d1816519736ac9ffed152))
+* **deps:** update rust crate mongodb to v3.3.0 ([30109ca](https://github.com/cailloumajor/mongodb-influxdb/commit/30109ca448e654381cdb4eba96311ded5eac62a3))
+* **deps:** update rust crate serde to v1.0.221 ([b81fcee](https://github.com/cailloumajor/mongodb-influxdb/commit/b81fcee2cbd9d233d3a5498009f51e7e5a1197e1))
+* **deps:** update rust crate serde to v1.0.223 ([2d76405](https://github.com/cailloumajor/mongodb-influxdb/commit/2d764052b2a3c4c3e49781faa8fb50ff2da4a1d2))
+* **deps:** update rust crate serde to v1.0.225 ([0a594f9](https://github.com/cailloumajor/mongodb-influxdb/commit/0a594f9b75fc151b954d2e2b39e56f9edb42df87))
+* **deps:** update rust crate serde to v1.0.226 ([3915a33](https://github.com/cailloumajor/mongodb-influxdb/commit/3915a338fc0efbe902cb60399162c3c252d56bf6))
+* **deps:** update rust crate tracing-subscriber to v0.3.20 ([3c33052](https://github.com/cailloumajor/mongodb-influxdb/commit/3c330527f849a2a7ba22b43dfccdd2d386edf198))
+* **deps:** update rust crate url to v2.5.6 ([a6b65eb](https://github.com/cailloumajor/mongodb-influxdb/commit/a6b65eb86975bd9d9ecb75a74a31c3e53faef654))
+* **deps:** update rust crate url to v2.5.7 ([e46c9cc](https://github.com/cailloumajor/mongodb-influxdb/commit/e46c9cc2c4c8532a8302b803c1d27b1c464f6fe0))
+* **deps:** update rust docker tag to v1.90.0 ([1f91a29](https://github.com/cailloumajor/mongodb-influxdb/commit/1f91a29e5a141fc14cbe83da91fe447b51394399))
+* **deps:** update rust docker tag to v1.91.0 ([d763a49](https://github.com/cailloumajor/mongodb-influxdb/commit/d763a49d45dc13a31ec863b0c7ddb31b3979254b))
+* **deps:** update rust docker tag to v1.91.1 ([c7a4e1a](https://github.com/cailloumajor/mongodb-influxdb/commit/c7a4e1a4a5a8f293c896303376e7e608fdec9d04))
+* **deps:** update rust docker tag to v1.92.0 ([d6ce733](https://github.com/cailloumajor/mongodb-influxdb/commit/d6ce73312b06292fa1f93df6001cb5c892bdd899))
+* **deps:** update tonistiigi/xx docker tag to v1.7.0 ([f748b5c](https://github.com/cailloumajor/mongodb-influxdb/commit/f748b5c4448a7c40c12ecac075e65ca5dad1ff28))
+* **deps:** update tonistiigi/xx docker tag to v1.8.0 ([e51c351](https://github.com/cailloumajor/mongodb-influxdb/commit/e51c351fdb7decdd8880bec70bb6b175707c3b63))
+* **deps:** update tonistiigi/xx docker tag to v1.9.0 ([89df105](https://github.com/cailloumajor/mongodb-influxdb/commit/89df105ee2b53861d813fa6a6d7ac3ec7c0031f9))
+
 ## [3.0.17](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.16...v3.0.17) (2025-08-14)
 
 
