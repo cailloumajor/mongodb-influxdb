@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.19](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.18...v3.0.19) (2026-01-01)
+
+
+### Bug Fixes
+
+* **deps:** specify full dependencies versions ([c0868b1](https://github.com/cailloumajor/mongodb-influxdb/commit/c0868b1cfe9662aeb43eac8df9d1eeb6aa2d913a))
+
 ## [3.0.18](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.17...v3.0.18) (2025-12-14)
 
 
