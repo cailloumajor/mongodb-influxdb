@@ -10,7 +10,6 @@ use signal_hook::low_level::signal_name;
 use signal_hook_tokio::Signals;
 use tokio_util::sync::CancellationToken;
 use tracing::{info, instrument};
-use tracing_log::LogTracer;
 
 use mongodb_influxdb::HEALTH_SOCKET_PATH;
 
@@ -33,7 +32,7 @@ struct Args {
     influxdb: influxdb::Config,
 
     #[command(flatten)]
-    verbose: Verbosity<InfoLevel>,
+    verbosity: Verbosity<InfoLevel>,
 }
 
 #[instrument(skip_all)]
@@ -51,10 +50,8 @@ async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
 
     tracing_subscriber::fmt()
-        .with_max_level(args.verbose.tracing_level())
+        .with_max_level(args.verbosity)
         .init();
-
-    LogTracer::init_with_filter(args.verbose.log_level_filter())?;
 
     let influxdb_client = Arc::new(influxdb::Client::new(&args.influxdb));
     let (data_points_tx, data_points_task) = influxdb_client.clone().handle_data_points();
