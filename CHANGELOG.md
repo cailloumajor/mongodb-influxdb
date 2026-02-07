@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.20](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.19...v3.0.20) (2026-02-07)
+
+
+### Bug Fixes
+
+* **deps:** update rust docker tag to v1.93.0 ([5bad1f0](https://github.com/cailloumajor/mongodb-influxdb/commit/5bad1f006522db9cad0440866d6b1df3915b819a))
+
 ## [3.0.19](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.18...v3.0.19) (2026-01-01)
 
 
