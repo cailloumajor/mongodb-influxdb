@@ -41,4 +41,4 @@ features = ["macros", "net", "rt-multi-thread", "sync", "time"]
 
 [dev-dependencies]
 mockito = "1.7.1"
-trycmd = "0.15.11"
+trycmd = "1.0.0"
