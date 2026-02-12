@@ -6,7 +6,7 @@ services:
       - ./push-data.mongodb:/usr/src/push-data.mongodb:ro
 
   influxdb:
-    image: influxdb:2.7
+    image: influxdb:2.8
     environment:
       - DOCKER_INFLUXDB_INIT_MODE=setup
       - DOCKER_INFLUXDB_INIT_USERNAME=user
