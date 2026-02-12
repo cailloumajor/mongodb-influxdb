@@ -1,7 +1,7 @@
 services:
 
   mongodb:
-    image: mongo:7.0
+    image: mongo:8.2
     volumes:
       - ./push-data.mongodb:/usr/src/push-data.mongodb:ro
 
