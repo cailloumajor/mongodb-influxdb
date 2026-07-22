@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.0.20](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.19...v3.0.20) (2026-07-22)
+
+
+### Bug Fixes
+
+* **deps:** update rust docker tag to v1.93.0 ([5bad1f0](https://github.com/cailloumajor/mongodb-influxdb/commit/5bad1f006522db9cad0440866d6b1df3915b819a))
+* **deps:** update rust docker tag to v1.93.1 ([e87e6d7](https://github.com/cailloumajor/mongodb-influxdb/commit/e87e6d732f3a8e9c486f6433e9cd65786a62efb8))
+* **deps:** update rust docker tag to v1.94.0 ([7915e29](https://github.com/cailloumajor/mongodb-influxdb/commit/7915e2968f38b28a12bdc427f68443da0a196932))
+* **deps:** update rust docker tag to v1.94.1 ([6260ee6](https://github.com/cailloumajor/mongodb-influxdb/commit/6260ee69c1cc1bee81fea5a4d8e16f6a0c067dfa))
+* **deps:** update rust docker tag to v1.95.0 ([c802401](https://github.com/cailloumajor/mongodb-influxdb/commit/c8024018e448966df0441c68ad0ab1ad486acb14))
+* **deps:** update rust docker tag to v1.96.1 ([c8b0b02](https://github.com/cailloumajor/mongodb-influxdb/commit/c8b0b021f27a24a49a42a230799a8896f3378d88))
+* **deps:** update rust docker tag to v1.97.0 ([69446b3](https://github.com/cailloumajor/mongodb-influxdb/commit/69446b3734f37ac8d80e41096b799d55af51b6d0))
+
 ## [3.0.19](https://github.com/cailloumajor/mongodb-influxdb/compare/v3.0.18...v3.0.19) (2026-01-01)
 
 
